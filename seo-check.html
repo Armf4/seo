@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ตัวตรวจ SEO บทความ</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Sarabun:wght@400;600;700&display=swap">
+<style>
+:root{--base:#2e9e4f;--ink:#1a1a1a;--card:#fff;--bg:#f3f3ee;--mute:#57575a;--line:#1a1a1a;--soft:#dcdcd3;--red:#d01012;--blue:#0d69ab;--yellow:#ffd500;--green:#237841;--okbg:#dff3e4;--warnbg:#fff1c2;--badbg:#fbdcd9;--ok:#1b7a3a;--warn:#946200;--bad:#c4161a;--mark:#ffe14d;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--base:#16512b;--ink:#f2f2ee;--card:#23262c;--bg:#15171b;--mute:#a9adb5;--line:#000;--soft:#3a3f47;--okbg:#1c3527;--warnbg:#3b3113;--badbg:#3d1f1b;--ok:#6fd39c;--warn:#f0c14d;--bad:#ff8a80}}
+:root[data-theme="dark"]{--base:#16512b;--ink:#f2f2ee;--card:#23262c;--bg:#15171b;--mute:#a9adb5;--line:#000;--soft:#3a3f47;--okbg:#1c3527;--warnbg:#3b3113;--badbg:#3d1f1b;--ok:#6fd39c;--warn:#f0c14d;--bad:#ff8a80}
+*{box-sizing:border-box}
+body{margin:0;color:var(--ink);font-family:'Sarabun',system-ui,'Noto Sans Thai',sans-serif;line-height:1.6;background-color:var(--base);background-image:radial-gradient(circle at 50% 50%,rgba(255,255,255,.2) 0 8px,rgba(0,0,0,.16) 9px 10px,transparent 11px);background-size:40px 40px}
+main{max-width:1040px;margin:0 auto;padding:26px 16px 56px}
+.hero{position:relative;background:var(--yellow);color:#1a1a1a;border:3px solid #1a1a1a;border-radius:12px;box-shadow:0 8px 0 rgba(0,0,0,.3);padding:18px 22px 16px;margin:16px 0 30px}
+.hero::before,.card::before{content:"";position:absolute;left:18px;right:18px;top:-11px;height:11px;background:radial-gradient(circle at 16px 100%,var(--stud,#c4a600) 0 10px,#1a1a1a 10px 12px,transparent 12.5px) 0 0/32px 100% repeat-x}
+.hero::before{--stud:#f0c800}
+h1,.card h2,button,.tag,.stat b,th{font-family:'Fredoka','Sarabun',sans-serif}
+h1{font-size:1.9rem;margin:0 0 2px;font-weight:700}
+.sub{margin:0;color:#3b3b3b}
+.card{position:relative;--stud:#d01012;background:var(--card);border:3px solid var(--line);border-radius:12px;box-shadow:0 7px 0 rgba(0,0,0,.28);padding:18px 16px 16px;margin:0 0 30px}
+.card:nth-of-type(4n+2){--stud:#0d69ab}.card:nth-of-type(4n+3){--stud:#f0c800}.card:nth-of-type(4n+4){--stud:#237841}
+.grid>.card{margin-bottom:30px}
+.card h2{font-size:1.2rem;margin:0 0 12px;font-weight:600}
+label{display:block;font-weight:700;margin:0 0 4px}
+input[type=text],textarea{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:2px solid var(--line);border-radius:8px;padding:8px 10px}
+input:focus-visible,button:focus-visible,.drop:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:760px){.grid{grid-template-columns:1fr}}
+.drop{display:block;border:3px dashed var(--blue);border-radius:10px;padding:18px;text-align:center;cursor:pointer;color:var(--mute);background:var(--bg)}
+.drop.over{background:var(--okbg);border-color:var(--green)}
+.drop b{color:var(--ink)}
+button{font-weight:600;font-size:1.05rem;background:var(--red);color:#fff;border:3px solid #1a1a1a;border-bottom-width:6px;border-radius:10px;padding:8px 26px 6px;cursor:pointer}
+button:active{transform:translateY(3px);border-bottom-width:3px}
+.hint{font-size:.85rem;color:var(--mute);margin:4px 0 0}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px}
+.stat{border:3px solid #1a1a1a;border-radius:10px;padding:8px 12px;color:#fff}
+.stat:nth-child(1){background:var(--red)}.stat:nth-child(2){background:var(--blue)}.stat:nth-child(3){background:var(--green)}.stat:nth-child(4){background:#1a1a1a}
+.stat b{display:block;font-size:1.7rem;line-height:1.2}
+.stat span{font-size:.85rem;opacity:.95}
+ul.checks{list-style:none;margin:0;padding:0}
+ul.checks li{display:flex;gap:10px;padding:8px 10px;border-radius:8px;margin-bottom:8px;border:2px solid var(--line)}
+.ok{background:var(--okbg)}.warn{background:var(--warnbg)}.bad{background:var(--badbg)}
+.ic{font-weight:700;min-width:1.4em;text-align:center;font-family:'Fredoka',sans-serif}
+li.ok .ic{color:var(--ok)}li.warn .ic{color:var(--warn)}li.bad .ic{color:var(--bad)}
+.outline{margin:0;padding:0;list-style:none}
+.outline li{display:flex;gap:8px;align-items:baseline;padding:5px 0;border-bottom:2px solid var(--soft)}
+.tag{flex:none;font-size:.78rem;font-weight:700;border-radius:6px;padding:1px 8px;background:var(--blue);color:#fff;border:2px solid #1a1a1a}
+.skip{color:var(--bad);font-size:.85rem;font-weight:600}
+.tblwrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{text-align:left;padding:6px 10px;border-bottom:2px solid var(--soft);white-space:nowrap}
+th{background:var(--yellow);color:#1a1a1a;border-bottom:3px solid #1a1a1a}
+.y{color:var(--ok);font-weight:700}.n{color:var(--bad);font-weight:600}
+.serp{background:#fff;color:#202124;border:2px solid #1a1a1a;border-radius:8px;padding:14px 16px;max-width:620px;font-family:Arial,sans-serif}
+.serp .u{color:#4d5156;font-size:.82rem}
+.serp .t{color:#1a0dab;font-size:1.2rem;margin:2px 0;line-height:1.3}
+.serp .d{color:#4d5156;font-size:.9rem}
+.serp b{font-weight:700}
+iframe{width:100%;height:480px;border:3px solid var(--line);border-radius:8px;background:#fff}
+.empty{color:var(--mute)}
+[hidden]{display:none!important}
+
+.top{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:0 0 28px}
+.btn{display:inline-block;font-family:'Fredoka','Sarabun',sans-serif;font-weight:600;font-size:1.05rem;background:var(--red);color:#fff;border:3px solid #1a1a1a;border-bottom-width:6px;border-radius:10px;padding:8px 24px 6px;cursor:pointer}
+.btn:active{transform:translateY(3px);border-bottom-width:3px}
+.top .hint{background:var(--card);border:2px solid var(--line);border-radius:8px;padding:4px 10px;margin:0;color:var(--ink)}
+.wp{display:grid;grid-template-columns:minmax(0,1fr) 390px;gap:24px;align-items:start}
+.wp>.card{margin-bottom:0}
+.wp .side.card{--stud:#0d69ab}
+.side{position:sticky;top:20px}
+.sc{max-height:calc(100vh - 70px);overflow:auto;padding-right:4px}
+@media(max-width:900px){.wp{grid-template-columns:1fr;gap:34px}.side{position:static}.sc{max-height:none}}
+.tb{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px;padding-bottom:12px;border-bottom:2px solid var(--soft)}
+select{font:inherit;color:var(--ink);background:var(--bg);border:2px solid var(--line);border-radius:8px;padding:5px 8px}
+select:focus-visible,#ed:focus-visible,textarea:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+#ed{min-height:460px;outline:none;font-size:1.05rem;line-height:1.75;padding:2px 4px;max-width:70ch;overflow-wrap:anywhere}
+#ed:empty::before{content:attr(data-ph);color:var(--mute)}
+#ed h1,#ed h2,#ed h3,#ed h4,#ed h5,#ed h6{font-family:'Fredoka','Sarabun',sans-serif;line-height:1.3;margin:1.1em 0 .4em}
+#ed h1{font-size:2rem}#ed h2{font-size:1.6rem}#ed h3{font-size:1.35rem}#ed h4{font-size:1.2rem}#ed h5{font-size:1.1rem}#ed h6{font-size:1rem}
+#ed p{margin:0 0 1em}
+.light{display:flex;align-items:center;gap:10px;font-family:'Fredoka','Sarabun',sans-serif;font-weight:600;font-size:1.15rem}
+.dot{width:20px;height:20px;border-radius:50%;border:3px solid #1a1a1a;background:#9a9a9a;flex:none}
+.dot.g{background:#2fb35a}.dot.o{background:#f5a300}.dot.r{background:#e02b2b}
+details{border-top:2px solid var(--soft);padding:10px 0;margin-top:10px}
+summary{cursor:pointer;font-family:'Fredoka','Sarabun',sans-serif;font-weight:600;font-size:1.05rem;margin-bottom:8px}
+.fld{margin:0 0 12px}
+.row{display:flex;justify-content:space-between;align-items:baseline}
+.row small{color:var(--mute)}
+.bar{height:8px;border-radius:4px;background:var(--soft);overflow:hidden;margin-top:4px}
+.bar i{display:block;height:100%;width:0;background:#f5a300}
+.bar i.g{background:#2fb35a}.bar i.r{background:#e02b2b}
+.gh{margin:12px 0 6px;font-size:.95rem;font-family:'Fredoka','Sarabun',sans-serif}
+textarea{min-height:76px;resize:vertical}
+
+#pv{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:calc(12px + env(safe-area-inset-top,0px)) 12px calc(12px + env(safe-area-inset-bottom,0px))}
+.pvbox{background:var(--card);border:3px solid var(--line);border-radius:12px;box-shadow:0 8px 0 rgba(0,0,0,.3);width:min(980px,100%);max-height:100%;display:flex;flex-direction:column;overflow:hidden}
+.pvhead{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;padding:10px 14px;border-bottom:3px solid var(--line);background:var(--yellow);color:#1a1a1a}
+.pvhead b{font-family:'Fredoka','Sarabun',sans-serif;font-size:1.1rem;margin-right:auto}
+.pvhead button{padding:4px 16px 2px}
+.chk{display:inline-flex;align-items:center;gap:6px;margin:0;font-weight:600;cursor:pointer}
+.pvscroll{overflow:auto;padding:16px;background:var(--bg)}
+.site{background:#fff;color:#222;border:2px solid #1a1a1a;border-radius:8px;overflow:hidden}
+.chrome{display:flex;gap:12px;align-items:center;background:#e4e4e4;padding:8px 12px 0;font-family:Arial,sans-serif;font-size:.85rem;border-bottom:1px solid #c8c8c8}
+.chrome .tab{background:#fff;border-radius:6px 6px 0 0;padding:5px 12px;max-width:55%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chrome .url{color:#555;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-bottom:5px}
+.page{padding:24px 28px 40px;max-width:760px;margin:0 auto;font-size:1.05rem;line-height:1.8;overflow-wrap:anywhere}
+.page p{margin:0 0 1em}
+.page h1,.page h2,.page h3,.page h4,.page h5,.page h6{font-family:'Fredoka','Sarabun',sans-serif;line-height:1.35;margin:1.2em 0 .4em}
+.page h1{font-size:2rem}.page h2{font-size:1.6rem}.page h3{font-size:1.35rem}.page h4{font-size:1.2rem}.page h5{font-size:1.1rem}.page h6{font-size:1rem}
+.page [data-h]::before{content:attr(data-h);display:inline-block;vertical-align:middle;margin-right:8px;font:700 .7rem/1 'Fredoka',sans-serif;color:#fff;border:2px solid #1a1a1a;border-radius:5px;padding:3px 6px;background:#555}
+.page h1::before{background:#d01012}.page h2::before{background:#0d69ab}.page h3::before{background:#237841}.page h4::before{background:#b7791f}.page h5::before{background:#7b3fa0}
+.page.noh [data-h]::before{display:none}
+mark.k0{background:#e02b2b;color:#fff;border-radius:3px;padding:0 3px}
+mark.kr{background:#ffe14d;color:#1a1a1a;border-radius:3px;padding:0 3px}
+.nohl mark.k0,.nohl mark.kr,.page.nohl mark.k0,.page.nohl mark.kr{background:none;color:inherit;padding:0}
+.lg{display:inline-flex;gap:8px}
+
+.tb2{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.mini{display:inline-block;font-family:'Fredoka','Sarabun',sans-serif;font-weight:600;font-size:.9rem;background:var(--bg);color:var(--ink);border:2px solid var(--line);border-bottom-width:4px;border-radius:8px;padding:3px 12px 1px;cursor:pointer}
+.mini:active{transform:translateY(2px);border-bottom-width:2px}
+.sub{display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--bg);border:2px solid var(--line);border-radius:8px;padding:8px 10px;margin-bottom:12px}
+.sub input[type=text]{flex:1 1 220px;width:auto}
+.sub label{margin:0;font-weight:600;display:inline-flex;gap:6px;align-items:center}
+#ed a{color:var(--blue);text-decoration:underline}
+:root[data-theme="dark"] #ed a{color:#6ab7f5}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #ed a{color:#6ab7f5}}
+#ed img{max-width:100%;height:auto;display:block;margin:10px 0;border:2px solid var(--line);border-radius:6px;cursor:pointer}
+#ed img.sel{outline:4px solid var(--blue)}
+#ed .stf{border-left:6px solid #f5a300;padding-left:10px;background:var(--warnbg)}
+#ed .lng{border-left:6px dashed var(--blue);padding-left:10px}
+.page img{max-width:100%;height:auto;display:block;margin:12px 0;border-radius:6px}
+.page a{color:#1a0dab;text-decoration:underline}
+
+/* --- H1-H6 = ตัวต่อคนละขนาด --- */
+.outline li{align-items:center;padding:12px 0 6px}
+.tag{position:relative;width:calc(var(--n,1)*20px);height:24px;padding:0;text-align:center;line-height:20px;font-size:.72rem;border-radius:4px;color:#fff;background:var(--bc,#555);border:2px solid #1a1a1a;flex:none}
+.tag::before{content:"";position:absolute;left:-2px;right:-2px;top:-10px;height:8px;background:radial-gradient(circle at 10px 100%,var(--bc,#555) 0 4px,#1a1a1a 4px 5.5px,transparent 6px) 0 0/20px 100% repeat-x}
+.tag.b1{--bc:#d01012;--n:6}.tag.b2{--bc:#0d69ab;--n:5}.tag.b3{--bc:#237841;--n:4}.tag.b4{--bc:#a15c00;--n:3}.tag.b5{--bc:#7b3fa0;--n:2}.tag.b6{--bc:#444;--n:1}
+/* --- ดาวน์โหลด --- */
+.dl{display:inline-flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--card);border:3px solid var(--line);border-radius:10px;padding:5px 10px}
+.dl .chk{font-size:.9rem}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+/* --- ฉลองเมื่อคะแนนเขียว --- */
+#party{position:fixed;inset:0;z-index:80;pointer-events:none;overflow:hidden}
+.cf{position:absolute;top:-24px;border:2px solid #1a1a1a;border-radius:3px;animation:fall linear forwards}
+.cf::after{content:"";position:absolute;left:50%;top:-6px;width:6px;height:4px;margin-left:-3px;background:inherit;border:2px solid #1a1a1a;border-bottom:0;border-radius:3px 3px 0 0}
+@keyframes fall{from{transform:translate(0,0) rotate(0)}to{transform:translate(var(--x),112vh) rotate(var(--r))}}
+#toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:90;max-width:calc(100% - 24px);background:var(--yellow);color:#1a1a1a;border:3px solid #1a1a1a;border-bottom-width:6px;border-radius:12px;padding:10px 18px;font-family:'Fredoka','Sarabun',sans-serif;font-weight:600;text-align:center;animation:pop .35s ease-out}
+@keyframes pop{from{transform:translateX(-50%) scale(.7);opacity:0}to{transform:translateX(-50%) scale(1);opacity:1}}
+@media(prefers-reduced-motion:reduce){.cf{display:none}#toast{animation:none}}
+/* --- พิมพ์เป็น PDF --- */
+#pa{display:none}
+@media print{
+@page{margin:18mm}
+body{background:#fff!important}
+main,#pv,#party,#toast{display:none!important}
+#pa{display:block!important;color:#000;font-family:'Sarabun',sans-serif;font-size:12pt;line-height:1.7}
+#pa h1,#pa h2,#pa h3,#pa h4,#pa h5,#pa h6{font-family:'Fredoka','Sarabun',sans-serif;line-height:1.3;margin:1em 0 .3em;break-after:avoid}
+#pa h1{font-size:24pt}#pa h2{font-size:19pt}#pa h3{font-size:16pt}#pa h4{font-size:14pt}#pa h5{font-size:13pt}#pa h6{font-size:12pt}
+#pa p{margin:0 0 .8em}
+#pa img{max-width:100%;height:auto;break-inside:avoid}
+#pa a{color:#0d69ab;text-decoration:underline}
+#pa .pm{border:1px solid #999;border-radius:6px;padding:8px 12px;margin-bottom:16px;font-size:10pt;color:#333;overflow-wrap:anywhere}
+}
+
+/* --- ป้ายตัวต่อที่กดได้ (Preview + โครงสร้างหัวข้อ) --- */
+.hb{cursor:pointer;font-family:'Fredoka','Sarabun',sans-serif;font-weight:700}
+.hb:hover{filter:brightness(1.15)}
+.hb:active{border-bottom-width:2px;transform:translateY(2px)}
+.page .hb{display:inline-block;vertical-align:middle;margin:0 10px 0 0}
+.page h2,.page h3,.page h4,.page h5,.page h6{border-top:2px dashed #d5d5d5;padding-top:.7em}
+.hb.w{box-shadow:0 0 0 3px #ffd500,0 0 0 5px #1a1a1a}
+.hw{display:inline-block;vertical-align:middle;font:600 .8rem/1.4 'Fredoka','Sarabun',sans-serif;color:#fff;background:#c4161a;border:2px solid #1a1a1a;border-radius:6px;padding:0 8px;margin-left:10px}
+.page.noh .hb,.page.noh .hw{display:none}
+.pvtip{font-size:.85rem;color:#1a1a1a}
+#ed .flash{border-radius:4px;animation:flash 2.2s ease-out}
+@keyframes flash{0%,70%{box-shadow:0 0 0 6px var(--yellow),0 0 0 9px #1a1a1a}100%{box-shadow:0 0 0 0 transparent}}
+.outline li{cursor:pointer}
+.outline li:hover{background:var(--bg)}
+.page .flash{border-radius:4px;animation:flash 2.2s ease-out}
+/* --- Preview: กรอบตัวต่อคลุมเนื้อหาของแต่ละหัวข้อ --- */
+.page .sec{--sc:#555;--st:#eee;position:relative;border:3px solid var(--sc);border-radius:10px;background:var(--st);padding:20px 16px 4px;margin:28px 0 14px;box-shadow:0 5px 0 rgba(0,0,0,.2)}
+.page .sec .sec{padding-left:12px;padding-right:12px}
+.page .sec::before{content:"";position:absolute;left:14px;right:14px;top:-12px;height:12px;background:radial-gradient(circle at 14px 100%,var(--sc) 0 8px,#1a1a1a 8px 10px,transparent 10.5px) 0 0/28px 100% repeat-x}
+.page .sec.s1{--sc:#d01012;--st:#fdecec}.page .sec.s2{--sc:#0d69ab;--st:#e6f1fa}.page .sec.s3{--sc:#237841;--st:#e6f4ea}.page .sec.s4{--sc:#a15c00;--st:#fbf0dc}.page .sec.s5{--sc:#7b3fa0;--st:#f1e8f7}.page .sec.s6{--sc:#444;--st:#eee}
+.page .sec>h1,.page .sec>h2,.page .sec>h3,.page .sec>h4,.page .sec>h5,.page .sec>h6{border-top:0;padding-top:0;margin-top:0;scroll-margin-top:32px}
+.page.noh .sec{border:0;background:none;box-shadow:none;padding:0;margin:0;border-radius:0}
+.page.noh .sec::before{display:none}
+.lgd{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;padding:16px 0 12px}
+.lgd .tag{display:inline-block}
+.lgd .hint{margin:0;flex-basis:100%}
+/* --- ช่องแก้บทความ: กล่องตัวต่อทีละส่วน --- */
+#ed .s0{--lc:#6b6f76;--n:0;--w:1}
+#ed .s1{--lc:#d01012;--n:1;--w:6}#ed .s2{--lc:#0d69ab;--n:2;--w:5}#ed .s3{--lc:#237841;--n:3;--w:4}#ed .s4{--lc:#a15c00;--n:4;--w:3}#ed .s5{--lc:#7b3fa0;--n:5;--w:2}#ed .s6{--lc:#555;--n:6;--w:1}
+#ed .eh,#ed .eb{position:relative}
+#ed .eh{margin:32px 0 12px calc((var(--n) - 1)*14px);padding:10px 16px;background:var(--lc);color:#fff;border:3px solid #1a1a1a;border-radius:10px;box-shadow:0 5px 0 rgba(0,0,0,.3)}
+#ed .eh::before{content:"";position:absolute;left:14px;right:14px;top:-12px;height:12px;background:radial-gradient(circle at 14px 100%,var(--lc) 0 8px,#1a1a1a 8px 10px,transparent 10.5px) 0 0/28px 100% repeat-x;pointer-events:none}
+#ed .eh::after,#ed .eb::after{content:attr(data-lb);position:absolute;right:14px;top:-14px;font:700 .72rem/1.55 'Fredoka','Sarabun',sans-serif;border:2px solid #1a1a1a;border-radius:6px;padding:0 8px;white-space:nowrap;pointer-events:none}
+#ed .eh::after{background:#fff;color:#1a1a1a;min-width:calc(var(--w)*14px);text-align:center;border-bottom-width:4px}
+#ed .eb::after{background:var(--lc);color:#fff}
+#ed .eb{margin:0 0 16px calc(var(--n)*14px);padding:12px 14px;border:3px solid var(--lc);border-radius:10px;background:color-mix(in srgb,var(--lc) 9%,var(--card));box-shadow:0 4px 0 rgba(0,0,0,.18)}
+#ed ul.eb,#ed ol.eb{padding-left:36px}
+#ed .eb.stf{border-left:8px solid #f5a300;background:var(--warnbg)}
+#ed .eb.lng{border-left:8px dashed #0d69ab}
+/* --- โหมดเต็มหน้าจอ --- */
+.fsl,.fsonly{display:none}
+.fsl{margin-left:auto;font-size:.95rem}
+body.fs{overflow:hidden}
+body.fs .hero,body.fs .side{visibility:hidden}
+body.fs .top{position:fixed;left:12px;right:12px;max-width:1016px;margin:0 auto;z-index:45}
+body.fs #edc{position:fixed;inset:0;z-index:40;margin:0;border:0;border-radius:0;box-shadow:none;display:flex;flex-direction:column;overflow:hidden;padding:calc(var(--barh,64px) + 24px + env(safe-area-inset-top,0px)) clamp(12px,3vw,40px) calc(8px + env(safe-area-inset-bottom,0px))}
+body.fs #edc::before{display:none}
+body.fs #edc>*{flex:none}
+body.fs #edc>#ed{flex:1 1 auto;min-height:0;overflow:auto;max-width:none;font-size:1.15rem;padding:34px max(4px,calc((100% - 920px)/2)) 80px}
+body.fs .fsl{display:flex}
+body.fs .fsonly{display:inline-block}
+/* --- แถบปุ่มด้านบน ล็อคไว้ --- */
+.top{position:sticky;top:calc(8px + env(safe-area-inset-top,0px));z-index:30;padding:10px 14px;background:color-mix(in srgb,var(--base) 78%,#000);border:3px solid #1a1a1a;border-radius:14px;box-shadow:0 6px 0 rgba(0,0,0,.3)}
+.ico{width:20px;height:20px;vertical-align:-4px;margin-right:6px;fill:none;stroke:#fff;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.ic-in{display:none}body.fs .ic-in{display:inline}body.fs .ic-out{display:none}
+@media(min-width:901px){.side{top:calc(var(--barh,64px) + 26px)}.sc{max-height:calc(100vh - var(--barh,64px) - 60px)}}
+</style>
+</head>
+<body>
+<main>
+<header class="hero">
+<h1>armr seo</h1>
+<p class="sub">อัพโหลด ไฟล์ pdf , txt แก้ไขตรงบล้อคด้านซ้าย ด้านขวาเช็คความถูกต้อง </p>
+</header>
+<div class="top" id="topbar">
+  <label class="btn" for="file">อัพโหลดไฟล์</label>
+  <input type="file" id="file" accept=".pdf,.html,.htm,.md,.txt,application/pdf,text/html,text/plain,text/markdown" hidden>
+  <button type="button" class="btn" id="pvbtn" style="background:var(--blue)">Preview หน้าเว็บ</button>
+  <button type="button" class="btn" id="fsb" aria-pressed="false" style="background:#7b3fa0"><svg class="ico ic-out" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg><svg class="ico ic-in" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg><span id="fst">เต็มหน้าจอ</span></button>
+  <span class="dl"><label for="dlf" class="sr">นามสกุลไฟล์</label><select id="dlf"><option value="txt">.txt</option><option value="pdf">.pdf</option></select><button type="button" class="btn" id="dlbtn" style="background:var(--green)">ดาวน์โหลด</button><label class="chk"><input type="checkbox" id="dlm" checked> แนบ SEO title / slug / meta</label></span>
+  <span class="hint" id="dlh" hidden></span>
+  <span class="hint" id="fname">รองรับ .pdf .html .htm .md .txt (PDF จะเดา H1–H6 จากขนาดตัวอักษร)</span>
+</div>
+<div class="wp">
+  <div class="card" id="edc">
+    <div class="tb">
+      <label for="blk" style="margin:0">รูปแบบข้อความ</label>
+      <select id="blk"><option value="">เลือกย่อหน้าแล้วเปลี่ยน…</option><option value="p">ย่อหน้าปกติ</option><option value="h1">หัวข้อ H1</option><option value="h2">หัวข้อ H2</option><option value="h3">หัวข้อ H3</option><option value="h4">หัวข้อ H4</option><option value="h5">หัวข้อ H5</option><option value="h6">หัวข้อ H6</option></select>
+      <span class="hint" style="margin:0">คลิกในย่อหน้า แล้วเปลี่ยนระดับหัวข้อ ผลตรวจจะเปลี่ยนทันที</span>
+      <span class="light fsl"><span class="dot" id="dot2"></span><span id="lt2">SEO</span></span>
+    </div>
+    <div class="tb2">
+      <button type="button" class="mini" id="lkb">แทรกลิงก์</button>
+      <button type="button" class="mini" id="ulk">ลบลิงก์</button>
+      <button type="button" class="mini" id="imb">แทรกรูปภาพ</button>
+      <span class="hint" style="margin:0">กล่องสี = ระดับ H ของส่วนนั้น (ชิปมุมขวาบนบอกว่าอยู่ใต้ H ไหน) · แถบส้ม = คีย์เวิร์ดถี่ · แถบน้ำเงินประ = ย่อหน้ายาว</span>
+    </div>
+    <div class="sub" id="lkp" hidden>
+      <input type="text" id="lku" placeholder="https://example.com/หน้าที่ต้องการ" aria-label="URL ลิงก์">
+      <label><input type="checkbox" id="lkn"> nofollow</label>
+      <button type="button" class="mini" id="lko">ใส่ลิงก์</button>
+      <button type="button" class="mini" id="lkc">ยกเลิก</button>
+      <span class="hint" id="lkh" style="flex-basis:100%;margin:0">เลือกข้อความในบทความก่อนแล้วกดใส่ลิงก์ (ถ้าไม่เลือก จะใช้ URL เป็นข้อความ) · Ctrl+คลิกที่ลิงก์เพื่อเปิดหน้านั้น</span>
+    </div>
+    <div class="sub" id="imp" hidden>
+      <input type="text" id="ima" placeholder="alt: คำอธิบายรูป (ใส่คีย์เวิร์ดถ้าเข้ากับรูป)" aria-label="alt ของรูป">
+      <label class="mini" for="imf">เลือกรูปจากเครื่อง</label>
+      <input type="file" id="imf" accept="image/*" hidden>
+      <button type="button" class="mini" id="imu">ตั้ง alt ให้รูปที่เลือก</button>
+      <span class="hint" id="imh" style="flex-basis:100%;margin:0">ใส่ alt ก่อนแล้วเลือกรูป หรือคลิกรูปในบทความเพื่อแก้ alt</span>
+    </div>
+    <div id="ed" contenteditable="true" spellcheck="false" role="textbox" aria-multiline="true" aria-label="เนื้อหาบทความ" data-ph="อัพโหลดไฟล์ หรือพิมพ์/วางบทความที่นี่"></div>
+  </div>
+  <aside class="card side"><div class="sc">
+    <div class="light"><span class="dot" id="dot"></span><span id="lt">SEO</span></div>
+    <p class="hint" id="meta">ยังไม่มีเนื้อหา</p>
+    <details open><summary>คีย์เวิร์ด</summary>
+      <div class="fld"><label for="fk">คีย์เวิร์ดหลัก</label><input type="text" id="fk" placeholder="เช่น ร้านกาแฟเชียงใหม่"></div>
+      <div class="fld"><label for="rk">คีย์เวิร์ดที่เกี่ยวข้อง</label><input type="text" id="rk" placeholder="คั่นด้วยจุลภาค (,)"></div>
+    </details>
+    <details open><summary>ตัวอย่างบน Google</summary>
+      <div class="fld"><label for="dom">โดเมนเว็บของคุณ</label><input type="text" id="dom" placeholder="example.com"></div>
+      <div class="serp" id="serp"></div>
+      <div class="fld" style="margin-top:12px"><div class="row"><label for="stitle">SEO title</label><small id="tlen">0/60</small></div><input type="text" id="stitle"><div class="bar"><i id="tbar"></i></div></div>
+      <div class="fld"><label for="slug">Slug (ส่วนท้าย URL)</label><input type="text" id="slug"></div>
+      <div class="fld"><div class="row"><label for="mdesc">Meta description</label><small id="dlen">0/160</small></div><textarea id="mdesc"></textarea><div class="bar"><i id="dbar"></i></div></div>
+    </details>
+    <details open><summary>ผลวิเคราะห์</summary><div id="checks"></div></details>
+    <details open><summary>โครงสร้างหัวข้อ H1–H6</summary><ul class="outline" id="outline"></ul></details>
+    <details><summary>ลิงก์ในบทความ</summary><div class="tblwrap" id="lnks"></div></details>
+    <details><summary>ตารางคีย์เวิร์ด</summary><div class="tblwrap" id="kwtbl"></div></details>
+  </div></aside>
+</div>
+</main>
+<div id="pv" hidden role="dialog" aria-modal="true" aria-label="ตัวอย่างหน้าเว็บ">
+ <div class="pvbox">
+  <div class="pvhead"><b>Preview หน้าเว็บ</b><span class="pvtip">คลิกป้ายตัวต่อหน้าหัวข้อ = ไปแก้หัวข้อนั้นในช่องบทความ</span>
+   <label class="chk"><input type="checkbox" id="pvh" checked> แสดงโครงสร้าง H (ตัวต่อ)</label>
+   <label class="chk"><input type="checkbox" id="pvk" checked> ไฮไลต์คีย์เวิร์ด</label>
+   <span class="lg"><mark class="k0">คีย์เวิร์ดหลัก</mark><mark class="kr">คีย์เวิร์ดรอง</mark></span>
+   <button type="button" id="pvx">ปิด</button></div>
+  <div class="pvscroll">
+  <div class="lgd"><span class="tag b1">H1</span><span class="tag b2">H2</span><span class="tag b3">H3</span><span class="tag b4">H4</span><span class="tag b5">H5</span><span class="tag b6">H6</span><span class="hint">ตัวต่อยิ่งใหญ่ = หัวข้อยิ่งหลัก · กรอบสีของตัวต่อคลุมเนื้อหาในหัวข้อนั้นจนถึงหัวข้อถัดไป</span></div>
+  <div class="site">
+   <div class="chrome"><span class="tab" id="pvtitle"></span><span class="url" id="pvurl"></span></div>
+   <div class="page" id="pvbody"></div>
+  </div></div>
+ </div>
+</div>
+
+<div id="party" aria-hidden="true"></div><div id="toast" role="status" aria-live="polite" hidden></div><div id="pa" aria-hidden="true"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+(function(){
+var $=function(id){return document.getElementById(id)};
+var fileName='article',wasG=false,lastParty=0;
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function reEsc(s){return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}
+function norm(s){return (s||'').replace(/\s+/g,' ').trim()}
+
+function toHtml(text){
+  if(/<(h[1-6]|p|div|html|body|title)[\s>]/i.test(text)) return text;
+  var out=[],buf=[];
+  function flush(){if(buf.length){out.push('<p>'+esc(buf.join(' '))+'</p>');buf=[]}}
+  text.split(/\r?\n/).forEach(function(line){
+    var m=line.match(/^(#{1,6})\s+(.*)$/);
+    if(m){flush();out.push('<h'+m[1].length+'>'+esc(m[2])+'</h'+m[1].length+'>')}
+    else if(/^[-*•]\s+/.test(line.trim())){flush();out.push('<ul><li>'+esc(line.trim().replace(/^[-*•]\s+/,''))+'</li></ul>')}
+    else if(!line.trim()) flush();
+    else buf.push(line.trim());
+  });
+  flush();
+  return out.join('\n');
+}
+
+function countWords(t){
+  if(window.Intl&&Intl.Segmenter){
+    var n=0,seg=new Intl.Segmenter('th',{granularity:'word'});
+    for(var s of seg.segment(t)) if(s.isWordLike) n++;
+    return n;
+  }
+  return t.split(/\s+/).filter(Boolean).length;
+}
+
+function first100(t){
+  if(window.Intl&&Intl.Segmenter){
+    var seg=new Intl.Segmenter('th',{granularity:'word'}),n=0,end=0;
+    for(var s of seg.segment(t)){ if(s.isWordLike) n++; end=s.index+s.segment.length; if(n>=100) break }
+    return t.slice(0,end);
+  }
+  return t.split(/\s+/).slice(0,100).join(' ');
+}
+
+function cut(s,n){return s.length>n?s.slice(0,n-1)+'…':s}
+function hl(s,kws){
+  var h=esc(s);
+  kws.forEach(function(k){h=h.replace(new RegExp(reEsc(esc(k)),'gi'),function(m){return '<b>'+m+'</b>'})});
+  return h;
+}
+function has(t,k){return t.toLowerCase().indexOf(k.toLowerCase())>-1}
+
+var OKT={H1:1,H2:1,H3:1,H4:1,H5:1,H6:1,P:1,UL:1,OL:1,LI:1,STRONG:1,EM:1,B:1,I:1,BR:1,IMG:1,BLOCKQUOTE:1};
+function clean(node,out){
+  [].slice.call(node.childNodes).forEach(function(n){
+    if(n.nodeType===3){out.appendChild(document.createTextNode(n.nodeValue));return}
+    if(n.nodeType!==1)return;
+    var t=n.tagName;
+    if(/^(SCRIPT|STYLE|NOSCRIPT|IFRAME|OBJECT|EMBED|HEAD|TEMPLATE|SVG)$/.test(t))return;
+    if(t==='A'){
+      var hr=(n.getAttribute('href')||'').trim();
+      if(!hr||/^(javascript|data|vbscript):/i.test(hr)){clean(n,out);return}
+      var ae=document.createElement('a');ae.setAttribute('href',hr);ae.setAttribute('target','_blank');
+      ae.setAttribute('rel','noopener noreferrer'+(/nofollow/i.test(n.getAttribute('rel')||'')?' nofollow':''));
+      clean(n,ae);out.appendChild(ae);return;
+    }
+    if(OKT[t]){
+      var e=document.createElement(t);
+      if(t==='IMG'){var a=n.getAttribute('alt');if(a)e.setAttribute('alt',a);var sr=n.getAttribute('src')||'';if(/^data:image\//i.test(sr))e.setAttribute('src',sr)}
+      clean(n,e);out.appendChild(e);
+    } else clean(n,out);
+  });
+}
+function slugify(n){return n.replace(/\.[^.]+$/,'').trim().toLowerCase().replace(/[\s_]+/g,'-')}
+function setContent(h){
+  var doc=new DOMParser().parseFromString(h,'text/html'),ed=$('ed');
+  ed.innerHTML='';clean(doc.body,ed);
+  var h1=ed.querySelector('h1'),m=doc.querySelector('meta[name="description" i]');
+  $('stitle').value=norm(doc.title)||(h1?norm(h1.textContent):'');
+  $('mdesc').value=m?norm(m.getAttribute('content')):'';
+  $('slug').value=slugify(fileName);
+  analyze();
+}
+var DECO=['eh','eb','s0','s1','s2','s3','s4','s5','s6'];
+function decorate(){
+  var lv=0;
+  [].forEach.call(ed.children,function(n){
+    DECO.forEach(function(c){n.classList.remove(c)});
+    var t=n.tagName,m=/^H([1-6])$/.exec(t);
+    if(t==='IMG'||t==='BR'){n.removeAttribute('data-lb');return}
+    if(m){lv=+m[1];n.classList.add('eh','s'+lv);n.setAttribute('data-lb','H'+lv);return}
+    n.classList.add('eb','s'+lv);
+    var k=/^(UL|OL)$/.test(t)?'ลิสต์':(t==='BLOCKQUOTE'?'อ้างอิง':'ย่อหน้า');
+    n.setAttribute('data-lb',k+(lv?' · ใต้ H'+lv:' · ก่อนหัวข้อแรก'));
+  });
+}
+function blocks(){
+  var out=[];
+  [].slice.call($('ed').childNodes).forEach(function(n){
+    if(n.nodeType===3){var t0=norm(n.nodeValue);if(t0)out.push({el:null,tag:'P',t:t0});return}
+    if(n.nodeType!==1)return;
+    if(/^(UL|OL)$/.test(n.tagName)){[].forEach.call(n.children,function(li){var t1=norm(li.innerText||li.textContent);if(t1)out.push({el:li,tag:'LI',t:t1})});return}
+    var t2=norm(n.innerText||n.textContent);if(t2)out.push({el:n,tag:n.tagName,t:t2});
+  });
+  return out;
+}
+function bar(id,len,lo,hi){
+  var i=$(id);i.style.width=Math.min(len/hi*100,100)+'%';
+  i.className=len===0?'':(len<lo?'':(len>hi?'r':'g'));
+}
+function analyze(){
+  var ed=$('ed'),text=norm(ed.innerText||ed.textContent);
+  decorate();
+  var k0=norm($('fk').value);
+  var kws=[k0].concat($('rk').value.split(',').map(norm)).filter(Boolean);
+  var heads=[].slice.call(ed.querySelectorAll('h1,h2,h3,h4,h5,h6')).map(function(h){return{lv:+h.tagName[1],tx:norm(h.textContent)}});
+  var h1s=heads.filter(function(h){return h.lv===1}),h1t=h1s.length?h1s[0].tx:'';
+  var title=norm($('stitle').value),desc=norm($('mdesc').value),slug=norm($('slug').value);
+  var effTitle=title||h1t,words=countWords(text),dom=norm($('dom').value).replace(/^https?:\/\//i,'').replace(/^www\./i,'').replace(/[\/?#].*$/,'').toLowerCase();
+  var imgs=[].slice.call(ed.querySelectorAll('img'));
+  var noAlt=imgs.filter(function(i){return !norm(i.getAttribute('alt'))}).length;
+
+  $('tlen').textContent=title.length+'/60';$('dlen').textContent=desc.length+'/160';
+  bar('tbar',title.length,30,60);bar('dbar',desc.length,70,160);
+  var sd=desc||cut(text,160);
+  $('serp').innerHTML='<div class="u">'+esc(dom||'example.com')+' › '+esc(slug||'ตัวอย่าง-url')+'</div><div class="t">'+hl(cut(effTitle||'(ยังไม่มีชื่อ)',60),kws)+'</div><div class="d">'+hl(cut(sd,160),kws)+(desc||!text?'':' <i>(ยังไม่ได้ใส่ meta description จึงใช้ข้อความจากบทความ)</i>')+'</div>';
+
+  function light(cls,label,meta){$('dot').className='dot '+cls;$('lt').textContent=label;$('meta').textContent=meta;$('dot2').className='dot '+cls;$('lt2').textContent=label}
+  if(!text){
+    $('checks').innerHTML='<p class="empty">อัพโหลดไฟล์หรือพิมพ์บทความ แล้วผลตรวจจะขึ้นที่นี่</p>';
+    $('outline').innerHTML='';$('kwtbl').innerHTML='';$('lnks').innerHTML='';wasG=false;light('','SEO','ยังไม่มีเนื้อหา');return;
+  }
+
+  var prev=0,skips=0,ol='';
+  heads.forEach(function(h,i){
+    var skip=prev&&h.lv>prev+1;if(skip)skips++;
+    ol+='<li style="padding-left:'+(h.lv-1)*18+'px"><button type="button" class="tag hb b'+h.lv+'" data-i="'+i+'" title="ดูหัวข้อนี้ใน Preview">H'+h.lv+'</button><span>'+esc(h.tx||'(ว่าง)')+(skip?' <span class="skip">ข้ามจาก H'+prev+' ไป H'+h.lv+'</span>':'')+'</span></li>';
+    prev=h.lv;
+  });
+  $('outline').innerHTML=ol||'<li class="empty">ไม่พบหัวข้อ</li>';
+
+  var c=[];function add(l,t){c.push([l,t])}
+  if(!title) add('warn','ยังไม่ได้ใส่ SEO title (ตอนนี้ใช้ H1 แทน)');
+  else if(title.length<30||title.length>60) add('warn','SEO title ยาว '+title.length+' ตัวอักษร (แนะนำ 30–60)');
+  else add('ok','SEO title ยาว '+title.length+' ตัวอักษร เหมาะสม');
+  if(!desc) add('warn','ยังไม่ได้ใส่ meta description (แนะนำ 70–160 ตัวอักษร)');
+  else if(desc.length<70||desc.length>160) add('warn','meta description ยาว '+desc.length+' ตัวอักษร (แนะนำ 70–160)');
+  else add('ok','meta description ยาว '+desc.length+' ตัวอักษร เหมาะสม');
+  if(!slug) add('warn','ยังไม่ได้ตั้ง slug');
+  if(h1s.length===0) add('bad','ไม่มี H1 — ควรมี 1 อัน');
+  else if(h1s.length>1) add('bad','มี H1 ถึง '+h1s.length+' อัน — ควรมีเพียง 1 อัน');
+  else add('ok','มี H1 หนึ่งอัน');
+  if(heads.length&&heads[0].lv!==1) add('warn','หัวข้อแรกคือ H'+heads[0].lv+' ควรเริ่มด้วย H1');
+  if(!heads.some(function(h){return h.lv===2})) add('warn','ไม่มี H2 — ควรแบ่งเนื้อหาเป็นหัวข้อย่อย');
+  if(skips) add('bad','ข้ามระดับหัวข้อ '+skips+' จุด (ดูโครงสร้างหัวข้อ)');
+  else if(heads.length) add('ok','ลำดับหัวข้อไม่ข้ามระดับ');
+  if(heads.some(function(h){return !h.tx})) add('warn','มีหัวข้อที่ไม่มีข้อความ');
+  if(words<300) add('warn','เนื้อหามี '+words+' คำ (ควรมี 300 คำขึ้นไป)');
+  else add('ok','เนื้อหามี '+words+' คำ');
+  if(imgs.length){if(noAlt) add('bad','รูป '+noAlt+' จาก '+imgs.length+' รูปไม่มี alt'); else add('ok','รูปทุกรูปมี alt')}
+  var f=first100(text);
+  if(k0){
+    var slugHit=has(slug,k0.replace(/\s+/g,'-'))||has(slug.replace(/-/g,' '),k0);
+    var hh=heads.some(function(h){return h.lv>1&&has(h.tx,k0)});
+    var n0=(text.match(new RegExp(reEsc(k0),'gi'))||[]).length,d0=words?n0*(countWords(k0)||1)/words*100:0;
+    add(has(effTitle,k0)?'ok':'bad','คีย์เวิร์ดหลักใน SEO title: '+(has(effTitle,k0)?'พบ':'ไม่พบ'));
+    add(has(h1t,k0)?'ok':'warn','คีย์เวิร์ดหลักใน H1: '+(has(h1t,k0)?'พบ':'ไม่พบ'));
+    add(has(f,k0)?'ok':'warn','คีย์เวิร์ดหลักใน 100 คำแรก: '+(has(f,k0)?'พบ':'ไม่พบ'));
+    add(has(desc,k0)?'ok':'warn','คีย์เวิร์ดหลักใน meta description: '+(has(desc,k0)?'พบ':'ไม่พบ'));
+    add(hh?'ok':'warn','คีย์เวิร์ดหลักในหัวข้อย่อย (H2–H6): '+(hh?'พบ':'ไม่พบ'));
+    add(slugHit?'ok':'warn','คีย์เวิร์ดหลักใน slug: '+(slugHit?'พบ':'ไม่พบ'));
+    if(imgs.length){var ak=imgs.some(function(i){return has(i.getAttribute('alt')||'',k0)});add(ak?'ok':'warn','คีย์เวิร์ดหลักใน alt ของรูป: '+(ak?'พบ':'ไม่พบ'))}
+    add(d0>3?'bad':(d0<0.5?'warn':'ok'),'ความหนาแน่นคีย์เวิร์ดหลัก '+d0.toFixed(2)+'% ('+n0+' ครั้ง, เหมาะสม 0.5–3%'+(d0>3?' · เกิน 3% เสี่ยงถูกมองว่ายัดคีย์เวิร์ด':'')+')');
+  } else add('bad','ยังไม่ได้ระบุคีย์เวิร์ดหลัก');
+
+  var links=[].slice.call(ed.querySelectorAll('a[href]')).map(function(a){
+    var h=a.getAttribute('href'),ext=false,mail=/^mailto:/i.test(h);
+    if(/^https?:\/\//i.test(h)){try{var host=new URL(h).hostname.replace(/^www\./,'').toLowerCase();ext=!(dom&&(host===dom||host.slice(-dom.length-1)==='.'+dom))}catch(e){ext=true}}
+    return{t:norm(a.textContent),h:h,ext:ext,mail:mail,nf:/nofollow/i.test(a.getAttribute('rel')||'')};
+  });
+  var il=links.filter(function(l){return !l.ext&&!l.mail}),xl=links.filter(function(l){return l.ext});
+  if(words>=150){
+    add(il.length?'ok':'warn',il.length?'มีลิงก์ภายใน '+il.length+' ลิงก์':'ยังไม่มีลิงก์ภายใน (ลิงก์ไปหน้าอื่นในเว็บของคุณ)');
+    add(xl.length?'ok':'warn',xl.length?'มีลิงก์ออกภายนอก '+xl.length+' ลิงก์':'ยังไม่มีลิงก์ออกไปยังแหล่งอ้างอิงภายนอก');
+  }
+  var emptyA=links.filter(function(l){return !l.t}).length,genA=links.filter(function(l){return /^(คลิกที่นี่|คลิก|อ่านต่อ|อ่านเพิ่มเติม|ที่นี่|click here|here|read more|more|link)$/i.test(l.t)}).length;
+  if(emptyA) add('bad','มีลิงก์ที่ไม่มีข้อความ '+emptyA+' ลิงก์');
+  if(genA) add('warn','มีลิงก์ที่ใช้ข้อความกว้างเกินไป (เช่น "คลิกที่นี่") '+genA+' ลิงก์ ควรใช้ข้อความที่บอกปลายทาง');
+  $('lnks').innerHTML=links.length?'<table><thead><tr><th>ข้อความ</th><th>ปลายทาง</th><th>ชนิด</th><th>nofollow</th></tr></thead><tbody>'+links.map(function(l){return '<tr><td>'+esc(cut(l.t||'(ว่าง)',30))+'</td><td>'+esc(cut(l.h,40))+'</td><td>'+(l.mail?'อีเมล':(l.ext?'ภายนอก':'ภายใน'))+'</td><td>'+(l.nf?'<span class="y">ใช่</span>':'ไม่')+'</td></tr>'}).join('')+'</tbody></table>'+((!dom&&xl.length)?'<p class="hint">ใส่โดเมนเว็บของคุณ (ในส่วน "ตัวอย่างบน Google") เพื่อแยกลิงก์ภายในให้ถูกต้อง</p>':''):'<p class="empty">ยังไม่มีลิงก์ในบทความ</p>';
+
+  [].forEach.call(ed.querySelectorAll('.stf,.lng'),function(el){el.classList.remove('stf','lng')});
+  var bl=blocks(),lngP=0,lngS=0,stfL=[],pi=0,sec=0,secHead='(ก่อนหัวข้อแรก)',secs=[],h2n=0,h2k=0;
+  function flushSec(){if(sec>300)secs.push(secHead+' '+sec+' คำ');sec=0}
+  bl.forEach(function(b){
+    var wb=countWords(b.t);
+    if(/^H[1-6]$/.test(b.tag)){flushSec();secHead='“'+cut(b.t,25)+'”';if(b.tag!=='H1'){h2n++;if(k0&&has(b.t,k0))h2k++}return}
+    pi++;sec+=wb;
+    if(wb>150){lngP++;if(b.el)b.el.classList.add('lng')}
+    var thai=(b.t.match(/[\u0E00-\u0E7F]/g)||[]).length>b.t.length*0.4;
+    (thai?b.t.split(/\s+/):b.t.split(/[.!?…]+\s+/)).forEach(function(sg){if(sg.length>60&&countWords(sg)>40)lngS++});
+    var hit=kws.some(function(k){var n=(b.t.match(new RegExp(reEsc(k),'gi'))||[]).length;return n>=5||(n>=3&&wb&&n*(countWords(k)||1)/wb*100>6)});
+    if(hit){stfL.push(pi);if(b.el)b.el.classList.add('stf')}
+  });
+  flushSec();
+  add(lngP?'warn':'ok',lngP?'มี '+lngP+' ย่อหน้ายาวเกิน 150 คำ (เส้นประสีน้ำเงินในช่องแก้บทความ) ลองแบ่งให้สั้นลง':'ความยาวย่อหน้าเหมาะสม');
+  add(lngS?'warn':'ok',lngS?'มี '+lngS+' ช่วงข้อความยาวเกิน 40 คำโดยไม่มีจุดหรือเว้นวรรค ลองแบ่งเป็นประโยคสั้น ๆ':'ความยาวประโยคเหมาะสม');
+  if(secs.length) add('warn','ช่วงเนื้อหายาวเกิน 300 คำโดยไม่มีหัวข้อย่อย: '+secs.slice(0,3).join(', '));
+  else if(words>=300) add('ok','แบ่งหัวข้อย่อยสม่ำเสมอ');
+  if(stfL.length) add('warn','ย่อหน้าที่ '+stfL.join(', ')+' ใส่คีย์เวิร์ดถี่เกินไป (กรอบสีส้มในช่องแก้บทความ)'); else if(kws.length) add('ok','ไม่พบย่อหน้าที่ยัดคีย์เวิร์ด');
+  if(k0&&h2n>=3&&h2k/h2n>0.6) add('warn','คีย์เวิร์ดหลักอยู่ในหัวข้อย่อย '+h2k+' จาก '+h2n+' หัวข้อ ดูเหมือนยัดคีย์เวิร์ด ลองเปลี่ยนคำในบางหัวข้อ');
+  var sym={ok:'✓',warn:'!',bad:'✕'},G=[['bad','ปัญหา (ควรแก้)'],['warn','ควรปรับปรุง'],['ok','ผ่านแล้ว']];
+  $('checks').innerHTML=G.map(function(g){
+    var it=c.filter(function(x){return x[0]===g[0]});
+    if(!it.length) return '';
+    return '<h3 class="gh">'+g[1]+' ('+it.length+')</h3><ul class="checks">'+it.map(function(x){return '<li class="'+x[0]+'"><span class="ic">'+sym[x[0]]+'</span><span>'+x[1]+'</span></li>'}).join('')+'</ul>';
+  }).join('');
+  var nb=c.filter(function(x){return x[0]==='bad'}).length,nw=c.filter(function(x){return x[0]==='warn'}).length,no=c.length-nb-nw;
+  var score=Math.round((no+0.5*nw)/c.length*100);
+  var cls=nb>=2?'r':((nb===1||nw>=2)?'o':'g');
+  if(cls==='g'&&!wasG&&Date.now()-lastParty>8000){lastParty=Date.now();celebrate(score)}
+  wasG=(cls==='g');
+  light(cls,'SEO: '+({r:'ต้องปรับปรุง',o:'พอใช้',g:'ดี'})[cls]+' ('+score+'%)',words+' คำ · อ่านประมาณ '+Math.max(1,Math.round(words/200))+' นาที · '+heads.length+' หัวข้อ · '+imgs.length+' รูป · '+links.length+' ลิงก์');
+
+  if(kws.length){
+    var rows=kws.map(function(k){
+      var m=text.match(new RegExp(reEsc(k),'gi')),n=m?m.length:0;
+      var kw=countWords(k)||1,den=words?(n*kw/words*100):0;
+      var hc=heads.filter(function(h){return has(h.tx,k)}).length;
+      var yn=function(b){return b?'<span class="y">มี</span>':'<span class="n">ไม่มี</span>'};
+      return '<tr><td>'+esc(k)+'</td><td>'+n+'</td><td class="'+(den>3?'n':(den>=0.5?'y':''))+'">'+den.toFixed(2)+'%</td><td>'+yn(has(effTitle,k))+'</td><td>'+yn(has(h1t,k))+'</td><td>'+hc+'</td><td>'+yn(has(f,k))+'</td></tr>';
+    }).join('');
+    $('kwtbl').innerHTML='<table><thead><tr><th>คำ</th><th>ครั้ง</th><th>หนาแน่น</th><th>Title</th><th>H1</th><th>ในหัวข้อ</th><th>100 คำแรก</th></tr></thead><tbody>'+rows+'</tbody></table>';
+  } else $('kwtbl').innerHTML='<p class="empty">ใส่คีย์เวิร์ดเพื่อดูผล</p>';
+}
+
+async function pdfToHtml(buf){
+  if(!window.pdfjsLib) throw new Error('โหลดตัวอ่าน PDF ไม่ได้ ตรวจสอบอินเทอร์เน็ต');
+  pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  var pdf=await pdfjsLib.getDocument({data:buf}).promise;
+  var meta=''; try{var m=await pdf.getMetadata(); meta=norm(m&&m.info&&m.info.Title)}catch(e){}
+  var lines=[],cur=null;
+  for(var p=1;p<=pdf.numPages;p++){
+    var tc=await (await pdf.getPage(p)).getTextContent(); cur=null;
+    tc.items.forEach(function(it){
+      if(!it.str||!it.str.trim()&&!cur) return;
+      var h=Math.round(Math.hypot(it.transform[2],it.transform[3])*10)/10,y=it.transform[5];
+      if(cur&&Math.abs(cur.y-y)<3){cur.t+=it.str; if(it.str.trim()) cur.h=Math.max(cur.h,h)}
+      else{cur={t:it.str,h:h,y:y,p:p};lines.push(cur)}
+    });
+  }
+  lines=lines.filter(function(l){l.t=norm(l.t);return l.t});
+  if(!lines.length) throw new Error('ไม่พบข้อความใน PDF (อาจเป็นไฟล์สแกนรูป)');
+  var freq={};lines.forEach(function(l){freq[l.h]=(freq[l.h]||0)+l.t.length});
+  var body=+Object.keys(freq).sort(function(a,b){return freq[b]-freq[a]})[0];
+  var sizes=[];lines.forEach(function(l){if(l.h>body*1.15&&l.t.length<160&&sizes.indexOf(l.h)<0) sizes.push(l.h)});
+  sizes.sort(function(a,b){return b-a});
+  var out=[],para=[],last=null;
+  function flush(){if(para.length){out.push('<p>'+esc(para.join(' '))+'</p>');para=[]}}
+  lines.forEach(function(l){
+    var lv=sizes.indexOf(l.h);
+    if(lv>-1){
+      flush(); lv=Math.min(lv+1,6);
+      var lastOut=out[out.length-1];
+      if(last&&last.h===l.h&&last.p===l.p&&lastOut&&lastOut.indexOf('<h'+lv+'>')===0){
+        out[out.length-1]=lastOut.replace('</h'+lv+'>',' '+esc(l.t)+'</h'+lv+'>');
+      } else out.push('<h'+lv+'>'+esc(l.t)+'</h'+lv+'>');
+    } else {
+      if(last&&last.p===l.p&&last.y-l.y>body*1.9) flush();
+      para.push(l.t);
+    }
+    last=l;
+  });
+  flush();
+  return '<!DOCTYPE html><html><head><meta charset="utf-8">'+(meta?'<title>'+esc(meta)+'</title>':'')+'</head><body>\n'+out.join('\n')+'\n</body></html>';
+}
+
+function load(file){
+  if(!file) return;
+  fileName=file.name;
+  $('fname').textContent='ไฟล์: '+file.name+' ('+Math.round(file.size/1024*10)/10+' KB)';
+  var isPdf=/\.pdf$/i.test(file.name)||file.type==='application/pdf';
+  var r=new FileReader();
+  r.onerror=function(){$('fname').textContent='อ่านไฟล์ไม่สำเร็จ ลองไฟล์อื่น'};
+  if(isPdf){
+    r.onload=function(){
+      $('fname').textContent='กำลังอ่าน PDF: '+file.name+' ...';
+      pdfToHtml(r.result).then(function(h){
+        setContent(h);
+        $('fname').textContent='ไฟล์: '+file.name+' (อ่านสำเร็จ แก้ไขในช่องซ้ายได้เลย)';
+      }).catch(function(e){
+        $('fname').textContent='อ่าน PDF ไม่สำเร็จ: '+(e&&e.message?e.message:e);
+      });
+    };
+    r.readAsArrayBuffer(file);
+  } else {
+    r.onload=function(){setContent(toHtml(r.result))};
+    r.readAsText(file,'utf-8');
+  }
+}
+var ed=$('ed'),saved=null,tm=null;
+function later(){clearTimeout(tm);tm=setTimeout(analyze,250)}
+$('file').addEventListener('change',function(e){load(e.target.files[0]);e.target.value=''});
+['fk','rk','stitle','slug','mdesc','dom'].forEach(function(id){$(id).addEventListener('input',later)});
+ed.addEventListener('input',later);
+ed.addEventListener('paste',function(e){
+  e.preventDefault();
+  var t=(e.clipboardData||window.clipboardData).getData('text/plain');
+  document.execCommand('insertText',false,t);
+});
+ed.addEventListener('dragover',function(e){e.preventDefault()});
+ed.addEventListener('drop',function(e){
+  if(e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files.length){e.preventDefault();load(e.dataTransfer.files[0])}
+});
+document.addEventListener('selectionchange',function(){
+  var s=window.getSelection();
+  if(s.rangeCount&&ed.contains(s.anchorNode)) saved=s.getRangeAt(0).cloneRange();
+});
+$('blk').addEventListener('change',function(){
+  var v=this.value;this.value='';
+  if(!v||!saved) return;
+  ed.focus();
+  var s=window.getSelection();s.removeAllRanges();s.addRange(saved);
+  document.execCommand('formatBlock',false,'<'+v+'>');
+  analyze();
+});
+function wrapKw(text,kws,k0){
+  var h=esc(text);if(!kws.length)return h;
+  var re=new RegExp(kws.slice().sort(function(a,b){return b.length-a.length}).map(function(k){return reEsc(esc(k))}).join('|'),'gi'),k0e=esc(k0).toLowerCase();
+  return h.replace(re,function(m){return '<mark class="'+(m.toLowerCase()===k0e?'k0':'kr')+'">'+m+'</mark>'});
+}
+function wrapSections(root){
+  var kids=[].slice.call(root.childNodes),stack=[];
+  root.innerHTML='';
+  kids.forEach(function(n){
+    var m=n.nodeType===1&&/^H([1-6])$/.exec(n.tagName),host;
+    if(m){
+      var lv=+m[1];
+      while(stack.length&&stack[stack.length-1].lv>=lv) stack.pop();
+      host=stack.length?stack[stack.length-1].el:root;
+      var d=document.createElement('section');d.className='sec s'+lv;
+      host.appendChild(d);d.appendChild(n);stack.push({lv:lv,el:d});
+    } else (stack.length?stack[stack.length-1].el:root).appendChild(n);
+  });
+}
+function openPv(){
+  var k0=norm($('fk').value),kws=[k0].concat($('rk').value.split(',').map(norm)).filter(Boolean);
+  var body=$('pvbody');
+  body.innerHTML=ed.innerHTML;
+  if(!norm(body.textContent)) body.innerHTML='<p>ยังไม่มีเนื้อหา อัพโหลดไฟล์หรือพิมพ์บทความก่อน</p>';
+  wrapSections(body);
+  if(kws.length){
+    var w=document.createTreeWalker(body,NodeFilter.SHOW_TEXT),nodes=[],n;
+    while(n=w.nextNode()) nodes.push(n);
+    nodes.forEach(function(t){
+      if(!kws.some(function(k){return has(t.nodeValue,k)}))return;
+      var sp=document.createElement('span');
+      sp.innerHTML=wrapKw(t.nodeValue,kws,k0);
+      t.parentNode.replaceChild(sp,t);
+    });
+  }
+  var eh=[].slice.call(ed.querySelectorAll('h1,h2,h3,h4,h5,h6')),pl=0,h1n=0;
+  [].forEach.call(body.querySelectorAll('h1,h2,h3,h4,h5,h6'),function(h,i){
+    var lv=+h.tagName[1],why='';
+    if(lv===1&&++h1n>1) why='มี H1 เกิน 1 อัน';
+    else if(pl&&lv>pl+1) why='ข้ามจาก H'+pl+' ไป H'+lv;
+    else if(!norm(h.textContent)) why='หัวข้อว่าง';
+    pl=lv;
+    var b=document.createElement('button');b.type='button';b.className='tag hb b'+lv+(why?' w':'');
+    b.textContent='H'+lv;b.title=(why?why+' · ':'')+'คลิกเพื่อไปแก้ตรงนี้ในช่องบทความ';
+    b.setAttribute('aria-label','แก้หัวข้อ H'+lv+(why?' ('+why+')':''));
+    b.addEventListener('click',function(){jumpTo(eh[i],true)});
+    h.insertBefore(b,h.firstChild);
+    if(why){var w=document.createElement('span');w.className='hw';w.textContent='แก้: '+why;h.appendChild(w)}
+  });
+  var h1=ed.querySelector('h1'),t=norm($('stitle').value)||(h1?norm(h1.textContent):'(ยังไม่มีชื่อ)');
+  $('pvtitle').innerHTML=wrapKw(t,kws,k0);
+  $('pvurl').textContent=(norm($('dom').value).replace(/^https?:\/\//i,'').replace(/[\/?#].*$/,'')||'example.com')+'/'+(norm($('slug').value)||'');
+  body.classList.toggle('noh',!$('pvh').checked);
+  body.classList.toggle('nohl',!$('pvk').checked);
+  $('pv').hidden=false;document.body.style.overflow='hidden';$('pvx').focus();
+}
+function closePv(){$('pv').hidden=true;document.body.style.overflow='';(document.body.classList.contains('fs')?ed:$('pvbtn')).focus()}
+$('pvbtn').addEventListener('click',openPv);
+$('pvx').addEventListener('click',closePv);
+$('pv').addEventListener('click',function(e){if(e.target===this)closePv()});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!$('pv').hidden)closePv()});
+$('pvh').addEventListener('change',function(){$('pvbody').classList.toggle('noh',!this.checked)});
+$('pvk').addEventListener('change',function(){$('pvbody').classList.toggle('nohl',!this.checked);$('pvtitle').classList.toggle('nohl',!this.checked)});
+function restore(){
+  var s=window.getSelection();ed.focus();s.removeAllRanges();
+  if(saved) s.addRange(saved); else {var r=document.createRange();r.selectNodeContents(ed);r.collapse(false);s.addRange(r)}
+}
+var selImg=null;
+$('lkb').addEventListener('click',function(){$('imp').hidden=true;$('lkp').hidden=!$('lkp').hidden;if(!$('lkp').hidden)$('lku').focus()});
+$('lkc').addEventListener('click',function(){$('lkp').hidden=true});
+$('lko').addEventListener('click',function(){
+  var u=norm($('lku').value);
+  if(!/^(https?:\/\/|mailto:)/i.test(u)&&/^[\w-]+(\.[\w-]+)+(\/.*)?$/.test(u)) u='https://'+u;
+  if(!/^(https?:\/\/|mailto:)/i.test(u)){$('lkh').textContent='ใส่ URL ให้ถูกต้อง เช่น https://example.com';return}
+  restore();
+  if(window.getSelection().isCollapsed) document.execCommand('insertHTML',false,'<a href="'+esc(u)+'">'+esc(u)+'</a>');
+  else document.execCommand('createLink',false,u);
+  [].forEach.call(ed.querySelectorAll('a[href]'),function(a){
+    if(!a.getAttribute('target')){a.setAttribute('target','_blank');a.setAttribute('rel','noopener noreferrer'+($('lkn').checked?' nofollow':''))}
+  });
+  $('lku').value='';$('lkp').hidden=true;analyze();
+});
+$('ulk').addEventListener('click',function(){restore();document.execCommand('unlink');analyze()});
+$('imb').addEventListener('click',function(){$('lkp').hidden=true;$('imp').hidden=!$('imp').hidden});
+function insertImg(src,alt){
+  restore();
+  document.execCommand('insertHTML',false,'<img src="'+src+'" alt="'+esc(alt)+'">');
+  $('imh').textContent='แทรกรูปแล้ว คลิกที่รูปเพื่อแก้ alt';analyze();
+}
+$('imf').addEventListener('change',function(){
+  var f=this.files[0];this.value='';if(!f)return;
+  var r=new FileReader();
+  r.onerror=function(){$('imh').textContent='อ่านรูปไม่สำเร็จ'};
+  r.onload=function(){
+    var img=new Image();
+    img.onerror=function(){$('imh').textContent='ไฟล์นี้ไม่ใช่รูปที่เปิดได้'};
+    img.onload=function(){
+      var src=r.result;
+      if(img.width>1200){
+        var c=document.createElement('canvas');c.width=1200;c.height=Math.round(img.height*1200/img.width);
+        c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+        src=c.toDataURL(/png/i.test(f.type)?'image/png':'image/jpeg',.85);
+      }
+      insertImg(src,norm($('ima').value));
+    };
+    img.src=r.result;
+  };
+  r.readAsDataURL(f);
+});
+ed.addEventListener('click',function(e){
+  var a=e.target.closest&&e.target.closest('a');
+  if(a&&(e.ctrlKey||e.metaKey)){e.preventDefault();window.open(a.href,'_blank','noopener')}
+  [].forEach.call(ed.querySelectorAll('img.sel'),function(i){i.classList.remove('sel')});
+  selImg=null;
+  if(e.target.tagName==='IMG'){
+    selImg=e.target;selImg.classList.add('sel');$('ima').value=selImg.getAttribute('alt')||'';
+    $('imp').hidden=false;$('lkp').hidden=true;$('imh').textContent='เลือกรูปแล้ว แก้ alt แล้วกด "ตั้ง alt ให้รูปที่เลือก"';
+  }
+});
+$('imu').addEventListener('click',function(){
+  if(!selImg){$('imh').textContent='ยังไม่ได้เลือกรูป คลิกที่รูปในบทความก่อน';return}
+  selImg.setAttribute('alt',norm($('ima').value));analyze();
+});
+
+function celebrate(score){
+  var toast=$('toast');
+  toast.textContent='🎉 ยอดเยี่ยม! SEO เป็นสีเขียวแล้ว ('+score+'%) ดาวน์โหลดบทความไปใช้ได้เลย';
+  toast.hidden=false;clearTimeout(celebrate.t);celebrate.t=setTimeout(function(){toast.hidden=true},5500);
+  if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var box=$('party'),cols=['#d01012','#0d69ab','#ffd500','#2fb35a','#f5a300','#7b3fa0'],i,d;
+  for(i=0;i<70;i++){
+    d=document.createElement('i');d.className='cf';
+    d.style.cssText='left:'+(Math.random()*100)+'%;background:'+cols[i%cols.length]+';width:'+(12+Math.random()*10)+'px;height:'+(10+Math.random()*8)+'px;animation-duration:'+(1.8+Math.random()*1.6)+'s;animation-delay:'+(Math.random()*.7)+'s;--r:'+Math.round(Math.random()*720-360)+'deg;--x:'+Math.round(Math.random()*160-80)+'px';
+    box.appendChild(d);
+  }
+  setTimeout(function(){box.innerHTML=''},4400);
+}
+function baseName(){return (norm($('slug').value)||slugify(fileName)||'article').replace(/[\\\/:*?"<>|]+/g,'-')}
+function inl(n){
+  var s='';
+  [].forEach.call(n.childNodes,function(c){
+    if(c.nodeType===3){s+=c.nodeValue;return}
+    if(c.nodeType!==1)return;
+    var t=c.tagName;
+    if(t==='BR'){s+=' ';return}
+    if(t==='IMG'){var a=norm(c.getAttribute('alt'));s+='[รูป'+(a?': '+a:'')+']';return}
+    var x=inl(c);
+    if(t==='A'){var h=c.getAttribute('href')||'',tx=norm(x);s+=(tx&&tx!==h)?tx+' ('+h+')':h;return}
+    s+=x;
+  });
+  return s;
+}
+function metaLines(){
+  return [['SEO title',norm($('stitle').value)],['Slug',norm($('slug').value)],['Meta description',norm($('mdesc').value)]].filter(function(m){return m[1]});
+}
+function toTxt(){
+  var out=[];
+  [].forEach.call(ed.childNodes,function(n){
+    if(n.nodeType===3){var a=norm(n.nodeValue);if(a)out.push(a);return}
+    if(n.nodeType!==1)return;
+    var t=n.tagName;
+    if(/^H[1-6]$/.test(t)){var h=norm(inl(n));if(h)out.push('######'.slice(0,+t[1])+' '+h);return}
+    if(/^(UL|OL)$/.test(t)){
+      var li=[].map.call(n.children,function(l){var x=norm(inl(l));return x?'- '+x:''}).filter(Boolean);
+      if(li.length)out.push(li.join('\n'));return;
+    }
+    var p=norm(inl(n));if(p)out.push(p);
+  });
+  var head='';
+  if($('dlm').checked){var ml=metaLines();if(ml.length)head=ml.map(function(m){return m[0]+': '+m[1]}).join('\n')+'\n\n----------------\n\n'}
+  return head+out.join('\n\n')+'\n';
+}
+function toPdf(){
+  var pa=$('pa');pa.innerHTML='';
+  if($('dlm').checked){
+    var ml=metaLines();
+    if(ml.length){var d=document.createElement('div');d.className='pm';d.innerHTML=ml.map(function(m){return '<div><b>'+esc(m[0])+':</b> '+esc(m[1])+'</div>'}).join('');pa.appendChild(d)}
+  }
+  var cp=ed.cloneNode(true);cp.removeAttribute('id');cp.removeAttribute('contenteditable');cp.removeAttribute('data-ph');
+  pa.appendChild(cp);
+  var old=document.title;document.title=baseName();
+  function done(){document.title=old;pa.innerHTML='';window.removeEventListener('afterprint',done)}
+  window.addEventListener('afterprint',done);
+  setTimeout(function(){window.print()},60);
+}
+$('dlbtn').addEventListener('click',function(){
+  var h=$('dlh');h.hidden=false;
+  if(!norm(ed.innerText||ed.textContent)&&!ed.querySelector('img')){h.textContent='ยังไม่มีเนื้อหาให้ดาวน์โหลด อัพโหลดไฟล์หรือพิมพ์บทความก่อน';return}
+  if($('dlf').value==='pdf'){toPdf();h.textContent='ในหน้าต่างพิมพ์ ให้เลือกปลายทางเป็น “บันทึกเป็น PDF” (Save as PDF)';return}
+  var blob=new Blob(['\ufeff'+toTxt()],{type:'text/plain;charset=utf-8'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=baseName()+'.txt';
+  document.body.appendChild(a);a.click();
+  setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500);
+  h.textContent='ดาวน์โหลด '+a.download+' แล้ว';
+});
+
+function jumpTo(el,fromPv){
+  if(!el) return;
+  if(fromPv) closePv();
+  var rm=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  el.scrollIntoView({behavior:rm?'auto':'smooth',block:'center'});
+  el.classList.remove('flash');void el.offsetWidth;el.classList.add('flash');
+  setTimeout(function(){el.classList.remove('flash')},2300);
+  ed.focus({preventScroll:true});
+  var r=document.createRange();r.selectNodeContents(el);r.collapse(false);
+  var sl=window.getSelection();sl.removeAllRanges();sl.addRange(r);
+}
+$('outline').addEventListener('click',function(e){
+  var li=e.target.closest&&e.target.closest('li'),b=li&&li.querySelector('.hb');
+  if(!b) return;
+  var i=+b.getAttribute('data-i');
+  openPv();
+  var el=$('pvbody').querySelectorAll('h1,h2,h3,h4,h5,h6')[i];
+  if(!el) return;
+  el.scrollIntoView({block:'start'});
+  el.classList.remove('flash');void el.offsetWidth;el.classList.add('flash');
+  setTimeout(function(){el.classList.remove('flash')},2300);
+});
+function setFs(on){
+  document.body.classList.toggle('fs',on);
+  $('fst').textContent=on?'ออกจากเต็มจอ':'เต็มหน้าจอ';$('fsb').setAttribute('aria-pressed',on?'true':'false');
+  if(on){
+    var de=document.documentElement;
+    if(de.requestFullscreen&&!document.fullscreenElement){try{de.requestFullscreen().catch(function(){})}catch(e){}}
+    ed.focus({preventScroll:true});
+  } else if(document.fullscreenElement&&document.exitFullscreen){try{document.exitFullscreen().catch(function(){})}catch(e){}}
+}
+$('fsb').addEventListener('click',function(){setFs(!document.body.classList.contains('fs'))});
+function measure(){document.documentElement.style.setProperty('--barh',$('topbar').offsetHeight+'px')}
+if(window.ResizeObserver) new ResizeObserver(measure).observe($('topbar'));
+window.addEventListener('resize',measure);measure();
+document.addEventListener('fullscreenchange',function(){if(!document.fullscreenElement&&document.body.classList.contains('fs'))setFs(false)});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&document.body.classList.contains('fs')&&$('pv').hidden)setFs(false)},true);
+analyze();
+})();
+</script>
+</body>
+</html>
