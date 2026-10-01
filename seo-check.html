@@ -239,6 +239,17 @@ body.fs .fsonly{display:inline-block}
 @keyframes ldDots{0%{content:""}25%{content:"."}50%{content:".."}75%,100%{content:"..."}}
 .ld-m{margin:0;color:#fff;opacity:.9;font-size:.95rem;text-shadow:0 2px 0 rgba(0,0,0,.35)}
 @media(prefers-reduced-motion:reduce){.ld-stage .b,.ld-t::after{animation:none}}
+.fl{flex-basis:100%;display:flex;flex-wrap:wrap;gap:8px;align-items:center;max-height:96px;overflow:auto;padding:2px}
+.fc{display:flex;align-items:center;gap:6px;background:var(--card);color:var(--ink);border:3px solid #1a1a1a;border-bottom-width:5px;border-radius:10px;padding:3px 6px}
+.fc.act{background:var(--yellow);color:#1a1a1a}
+.fc.lk{opacity:.72;border-style:dashed}
+.fc.dup{outline:3px solid var(--red)}
+.fc .dot{width:14px;height:14px;border-width:2px}
+.fc button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;padding:2px 4px;border-radius:6px}
+.fc .fn{max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.fc button:hover{background:rgba(0,0,0,.12)}
+#edc.lk #ed{opacity:.7;background:repeating-linear-gradient(45deg,transparent 0 12px,rgba(0,0,0,.04) 12px 24px)}
+#pa .pk+.pk{break-before:page}
 </style>
 </head>
 <body>
@@ -262,12 +273,13 @@ body.fs .fsonly{display:inline-block}
 </header>
 <div class="top" id="topbar">
   <label class="btn" for="file">อัพโหลดไฟล์</label>
-  <input type="file" id="file" accept=".pdf,.html,.htm,.md,.txt,application/pdf,text/html,text/plain,text/markdown" hidden>
+  <input type="file" id="file" multiple accept=".pdf,.html,.htm,.md,.txt,application/pdf,text/html,text/plain,text/markdown" hidden>
   <button type="button" class="btn" id="pvbtn" style="background:var(--blue)">Preview หน้าเว็บ</button>
   <button type="button" class="btn" id="fsb" aria-pressed="false" style="background:#7b3fa0"><svg class="ico ic-out" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg><svg class="ico ic-in" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg><span id="fst">เต็มหน้าจอ</span></button>
-  <span class="dl"><label for="dlf" class="sr">นามสกุลไฟล์</label><select id="dlf"><option value="txt">.txt</option><option value="pdf">.pdf</option></select><button type="button" class="btn" id="dlbtn" style="background:var(--green)">ดาวน์โหลด</button><label class="chk"><input type="checkbox" id="dlm" checked> แนบ SEO title / slug / meta</label></span>
+  <div class="fl" id="fl" hidden></div>
+  <span class="dl"><select id="dls" aria-label="ขอบเขตดาวน์โหลด" hidden></select><label for="dlf" class="sr">นามสกุลไฟล์</label><select id="dlf"><option value="txt">.txt</option><option value="pdf">.pdf</option></select><button type="button" class="btn" id="dlbtn" style="background:var(--green)">ดาวน์โหลด</button><label class="chk"><input type="checkbox" id="dlm" checked> แนบ SEO title / slug / meta</label></span>
   <span class="hint" id="dlh" hidden></span>
-  <span class="hint" id="fname">รองรับ .pdf .html .htm .md .txt (PDF จะเดา H1–H6 จากขนาดตัวอักษร)</span>
+  <span class="hint" id="fname">เลือกได้หลายไฟล์ · รองรับ .pdf .html .htm .md .txt (PDF จะเดา H1–H6 จากขนาดตัวอักษร)</span>
 </div>
 <div class="wp">
   <div class="card" id="edc">
@@ -462,7 +474,7 @@ function analyze(){
   var sd=desc||cut(text,160);
   $('serp').innerHTML='<div class="u">'+esc(dom||'example.com')+' › '+esc(slug||'ตัวอย่าง-url')+'</div><div class="t">'+hl(cut(effTitle||'(ยังไม่มีชื่อ)',60),kws)+'</div><div class="d">'+hl(cut(sd,160),kws)+(desc||!text?'':' <i>(ยังไม่ได้ใส่ meta description จึงใช้ข้อความจากบทความ)</i>')+'</div>';
 
-  function light(cls,label,meta){$('dot').className='dot '+cls;$('lt').textContent=label;$('meta').textContent=meta;$('dot2').className='dot '+cls;$('lt2').textContent=label}
+  function light(cls,label,meta){setTimeout(fsync,0);$('dot').className='dot '+cls;$('lt').textContent=label;$('meta').textContent=meta;$('dot2').className='dot '+cls;$('lt2').textContent=label}
   if(!text){
     $('checks').innerHTML='<p class="empty">อัพโหลดไฟล์หรือพิมพ์บทความ แล้วผลตรวจจะขึ้นที่นี่</p>';
     $('outline').innerHTML='';$('kwtbl').innerHTML='';$('lnks').innerHTML='';wasG=false;light('','SEO','ยังไม่มีเนื้อหา');return;
@@ -611,33 +623,95 @@ async function pdfToHtml(buf){
   return '<!DOCTYPE html><html><head><meta charset="utf-8">'+(meta?'<title>'+esc(meta)+'</title>':'')+'</head><body>\n'+out.join('\n')+'\n</body></html>';
 }
 
-function load(file){
-  if(!file) return;
-  fileName=file.name;
-  $('fname').textContent='ไฟล์: '+file.name+' ('+Math.round(file.size/1024*10)/10+' KB)';
-  var isPdf=/\.pdf$/i.test(file.name)||file.type==='application/pdf';
-  var r=new FileReader();
-  r.onerror=function(){$('fname').textContent='อ่านไฟล์ไม่สำเร็จ ลองไฟล์อื่น'};
-  if(isPdf){
-    r.onload=function(){
-      $('fname').textContent='กำลังอ่าน PDF: '+file.name+' ...';
-      ldShow('กำลังแกะไฟล์ PDF','ตัวต่อกำลังเรียงหัวข้อ H1–H6 ให้ · '+file.name,900);
-      pdfToHtml(r.result).then(function(h){
-        setContent(h);
-        $('fname').textContent='ไฟล์: '+file.name+' (อ่านสำเร็จ แก้ไขในช่องซ้ายได้เลย)';
-      }).catch(function(e){
-        $('fname').textContent='อ่าน PDF ไม่สำเร็จ: '+(e&&e.message?e.message:e);
-      }).then(function(){ldHide()});
-    };
-    r.readAsArrayBuffer(file);
-  } else {
-    r.onload=function(){setContent(toHtml(r.result))};
-    r.readAsText(file,'utf-8');
+var files=[],cur=-1,FLD=['fk','rk','stitle','slug','mdesc'];
+function readFile(file){return new Promise(function(res,rej){
+  var r=new FileReader(),pdf=/\.pdf$/i.test(file.name)||file.type==='application/pdf';
+  r.onerror=function(){rej(new Error('อ่านไฟล์ไม่สำเร็จ'))};
+  r.onload=function(){if(pdf)pdfToHtml(r.result).then(res,rej);else res(toHtml(r.result))};
+  if(pdf)r.readAsArrayBuffer(file);else r.readAsText(file,'utf-8');
+})}
+function snap(){if(cur<0||!files[cur])return;var f=files[cur];f.html=$('ed').innerHTML;FLD.forEach(function(k){f[k]=$(k).value});f.cls=$('dot').className}
+function addFile(name,h){
+  snap();var first=!files.length,fk=$('fk').value,rk=$('rk').value;cur=-1;fileName=name;
+  setContent(h);
+  if(first){$('fk').value=fk;$('rk').value=rk}else{$('fk').value='';$('rk').value=''}
+  var f={name:name,on:true};files.push(f);cur=files.length-1;snap();cur=-1;
+}
+function loadMany(list){
+  list=[].slice.call(list||[]);if(!list.length)return;
+  var n=0,pdf=list.some(function(f){return /\.pdf$/i.test(f.name)});
+  if(pdf)ldShow('กำลังแกะไฟล์','ตัวต่อกำลังเรียงหัวข้อ H1–H6 ให้',700);
+  list.reduce(function(p,file){return p.then(function(){
+    $('fname').textContent='กำลังอ่าน '+(++n)+'/'+list.length+': '+file.name;
+    return readFile(file).then(function(h){addFile(file.name,h)}).catch(function(){$('fname').textContent='อ่าน '+file.name+' ไม่สำเร็จ ข้ามไปไฟล์ถัดไป'});
+  })},Promise.resolve()).then(function(){
+    if(pdf)ldHide();
+    if(files.length)show(files.length-1);
+  });
+}
+function applyLock(){
+  var lock=cur>=0&&!files[cur].on;
+  $('ed').contentEditable=lock?'false':'true';
+  FLD.concat(['blk','lkb','ulk','imb']).forEach(function(k){$(k).disabled=lock});
+  $('edc').classList.toggle('lk',lock);
+}
+function show(i){
+  if(cur>=0)snap();
+  cur=i;var f=files[i];fileName=f.name;
+  $('ed').innerHTML=f.html;FLD.forEach(function(k){$(k).value=f[k]||''});
+  applyLock();analyze();
+  $('fname').textContent='ไฟล์ '+(i+1)+'/'+files.length+': '+f.name+(f.on?'':' (ล็อกอยู่ ปลดล็อกเพื่อแก้ไข)');
+}
+function fsync(){if(cur<0)return;snap();render()}
+function render(){
+  var box=$('fl');box.hidden=!files.length;
+  var dls=$('dls'),old=dls.value;dls.hidden=files.length<2;
+  var on=files.filter(function(f){return f.on}).length;
+  dls.innerHTML='<option value="one">ไฟล์นี้</option><option value="on">ไฟล์ที่เปิดแก้ไข ('+on+')</option><option value="all">ทุกไฟล์ ('+files.length+')</option>';
+  dls.value=old||'one';
+  var cs={},cn={};
+  files.forEach(function(f){var s=norm(f.slug),k=norm(f.fk).toLowerCase();if(s)cs[s]=(cs[s]||0)+1;if(k)cn[k]=(cn[k]||0)+1});
+  var h=files.map(function(f,i){
+    var s=norm(f.slug),k=norm(f.fk).toLowerCase(),dup=(s&&cs[s]>1)||(k&&cn[k]>1);
+    return '<div class="fc'+(i===cur?' act':'')+(f.on?'':' lk')+(dup?' dup':'')+'"'+(dup?' title="slug หรือคีย์เวิร์ดหลักซ้ำกับไฟล์อื่น"':'')+'><span class="'+esc(f.cls||'dot')+'"></span><button type="button" class="fn" data-a="go" data-i="'+i+'">'+esc(f.name)+'</button><button type="button" data-a="lock" data-i="'+i+'" title="'+(f.on?'กดเพื่อล็อก':'กดเพื่อปลดล็อก')+'">'+(f.on?'✎':'🔒')+'</button><button type="button" data-a="del" data-i="'+i+'" title="เอาออก">×</button></div>';
+  }).join('');
+  if(files.length>1)h+='<button type="button" class="mini" data-a="all">สลับล็อกทั้งหมด</button>';
+  box.innerHTML=h;measure();
+}
+$('fl').addEventListener('click',function(e){
+  var b=e.target.closest('button');if(!b)return;
+  var a=b.getAttribute('data-a'),i=+b.getAttribute('data-i');snap();
+  if(a==='go'){if(i!==cur)show(i)}
+  else if(a==='lock'){files[i].on=!files[i].on;if(i===cur){applyLock();show(i)}else render()}
+  else if(a==='all'){var any=files.some(function(f){return !f.on});files.forEach(function(f){f.on=any});applyLock();show(cur<0?0:cur)}
+  else if(a==='del'){
+    if(!confirm('เอา "'+files[i].name+'" ออกจากรายการ?'))return;
+    files.splice(i,1);
+    if(!files.length){cur=-1;fileName='article';$('ed').innerHTML='';FLD.forEach(function(k){$(k).value=''});applyLock();analyze();render();$('fname').textContent='เลือกได้หลายไฟล์ · รองรับ .pdf .html .htm .md .txt';return}
+    var n=Math.min(i,files.length-1);if(i<cur)n=cur-1;else if(i>cur)n=cur;cur=-1;show(n);
   }
+});
+function each(idx,fn){
+  snap();var keep=cur,r=[];cur=-1;
+  idx.forEach(function(i){var f=files[i];fileName=f.name;$('ed').innerHTML=f.html;FLD.forEach(function(k){$(k).value=f[k]||''});r.push(fn(f))});
+  show(keep);return r;
+}
+function crc(b){var t=crc.t,c,n,k;if(!t){t=crc.t=[];for(n=0;n<256;n++){c=n;for(k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}}c=-1;for(n=0;n<b.length;n++)c=t[(c^b[n])&255]^(c>>>8);return(c^-1)>>>0}
+function zip(items){
+  var enc=new TextEncoder(),parts=[],cd=[],off=0,cs=0;
+  items.forEach(function(it){
+    var nb=enc.encode(it.n),db=enc.encode('\ufeff'+it.t),cr=crc(db);
+    var h=new DataView(new ArrayBuffer(30));h.setUint32(0,0x04034b50,true);h.setUint16(4,20,true);h.setUint16(6,0x0800,true);h.setUint32(14,cr,true);h.setUint32(18,db.length,true);h.setUint32(22,db.length,true);h.setUint16(26,nb.length,true);
+    parts.push(h.buffer,nb,db);
+    var c=new DataView(new ArrayBuffer(46));c.setUint32(0,0x02014b50,true);c.setUint16(4,20,true);c.setUint16(6,20,true);c.setUint16(8,0x0800,true);c.setUint32(16,cr,true);c.setUint32(20,db.length,true);c.setUint32(24,db.length,true);c.setUint16(28,nb.length,true);c.setUint32(42,off,true);
+    cd.push(c.buffer,nb);cs+=46+nb.length;off+=30+nb.length+db.length;
+  });
+  var e=new DataView(new ArrayBuffer(22));e.setUint32(0,0x06054b50,true);e.setUint16(8,items.length,true);e.setUint16(10,items.length,true);e.setUint32(12,cs,true);e.setUint32(16,off,true);
+  return new Blob(parts.concat(cd,[e.buffer]),{type:'application/zip'});
 }
 var ed=$('ed'),saved=null,tm=null;
 function later(){clearTimeout(tm);tm=setTimeout(analyze,250)}
-$('file').addEventListener('change',function(e){load(e.target.files[0]);e.target.value=''});
+$('file').addEventListener('change',function(e){loadMany(e.target.files);e.target.value=''});
 ['fk','rk','stitle','slug','mdesc','dom'].forEach(function(id){$(id).addEventListener('input',later)});
 ed.addEventListener('input',later);
 ed.addEventListener('paste',function(e){
@@ -647,7 +721,7 @@ ed.addEventListener('paste',function(e){
 });
 ed.addEventListener('dragover',function(e){e.preventDefault()});
 ed.addEventListener('drop',function(e){
-  if(e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files.length){e.preventDefault();load(e.dataTransfer.files[0])}
+  if(e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files.length){e.preventDefault();loadMany(e.dataTransfer.files)}
 });
 document.addEventListener('selectionchange',function(){
   var s=window.getSelection();
@@ -833,28 +907,33 @@ function toTxt(){
   if($('dlm').checked){var ml=metaLines();if(ml.length)head=ml.map(function(m){return m[0]+': '+m[1]}).join('\n')+'\n\n----------------\n\n'}
   return head+out.join('\n\n')+'\n';
 }
-function toPdf(){
+function pdfBox(){
+  var b=document.createElement('div');b.className='pk';
+  if($('dlm').checked){var ml=metaLines();if(ml.length){var d=document.createElement('div');d.className='pm';d.innerHTML=ml.map(function(m){return '<div><b>'+esc(m[0])+':</b> '+esc(m[1])+'</div>'}).join('');b.appendChild(d)}}
+  var cp=ed.cloneNode(true);cp.removeAttribute('id');cp.removeAttribute('contenteditable');cp.removeAttribute('data-ph');b.appendChild(cp);return b;
+}
+function toPdf(idx){
   var pa=$('pa');pa.innerHTML='';
-  if($('dlm').checked){
-    var ml=metaLines();
-    if(ml.length){var d=document.createElement('div');d.className='pm';d.innerHTML=ml.map(function(m){return '<div><b>'+esc(m[0])+':</b> '+esc(m[1])+'</div>'}).join('');pa.appendChild(d)}
-  }
-  var cp=ed.cloneNode(true);cp.removeAttribute('id');cp.removeAttribute('contenteditable');cp.removeAttribute('data-ph');
-  pa.appendChild(cp);
-  var old=document.title;document.title=baseName();
+  if(idx)each(idx,function(){pa.appendChild(pdfBox())});else pa.appendChild(pdfBox());
+  var old=document.title;document.title=idx?'articles':baseName();
   function done(){document.title=old;pa.innerHTML='';window.removeEventListener('afterprint',done)}
   window.addEventListener('afterprint',done);
   setTimeout(function(){window.print()},60);
 }
 $('dlbtn').addEventListener('click',function(){
   var h=$('dlh');h.hidden=false;
-  if(!norm(ed.innerText||ed.textContent)&&!ed.querySelector('img')){h.textContent='ยังไม่มีเนื้อหาให้ดาวน์โหลด อัพโหลดไฟล์หรือพิมพ์บทความก่อน';return}
-  if($('dlf').value==='pdf'){toPdf();h.textContent='ในหน้าต่างพิมพ์ ให้เลือกปลายทางเป็น “บันทึกเป็น PDF” (Save as PDF)';return}
-  var blob=new Blob(['\ufeff'+toTxt()],{type:'text/plain;charset=utf-8'});
-  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=baseName()+'.txt';
+  var sc=files.length>1?$('dls').value:'one';
+  var idx=sc==='one'?null:files.map(function(f,i){return i}).filter(function(i){return sc==='all'||files[i].on});
+  if(idx&&!idx.length){h.textContent='ยังไม่มีไฟล์ที่เปิดแก้ไข';return}
+  if(!idx&&!norm(ed.innerText||ed.textContent)&&!ed.querySelector('img')){h.textContent='ยังไม่มีเนื้อหาให้ดาวน์โหลด อัพโหลดไฟล์หรือพิมพ์บทความก่อน';return}
+  if($('dlf').value==='pdf'){toPdf(idx);h.textContent='ในหน้าต่างพิมพ์ ให้เลือกปลายทางเป็น “บันทึกเป็น PDF” (Save as PDF)'+(idx?' · แต่ละบทความขึ้นหน้าใหม่':'');return}
+  var blob,name;
+  if(idx){var used={};blob=zip(each(idx,function(){var n=baseName(),k=n,c=1;while(used[k])k=n+'-'+(++c);used[k]=1;return{n:k+'.txt',t:toTxt()}}));name='articles.zip'}
+  else{blob=new Blob(['\ufeff'+toTxt()],{type:'text/plain;charset=utf-8'});name=baseName()+'.txt'}
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;
   document.body.appendChild(a);a.click();
   setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500);
-  h.textContent='ดาวน์โหลด '+a.download+' แล้ว';
+  h.textContent='ดาวน์โหลด '+name+' แล้ว';
 });
 
 function jumpTo(el,fromPv){
