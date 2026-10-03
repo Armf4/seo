@@ -154,7 +154,7 @@ mark.kr{background:#ffe14d;color:#1a1a1a;border-radius:3px;padding:0 3px}
 @media print{
 @page{margin:18mm}
 body{background:#fff!important}
-main,#pv,#party,#toast{display:none!important}
+main,#pv,#party,#toast,#lib{display:none!important}
 #pa{display:block!important;color:#000;font-family:'Sarabun',sans-serif;font-size:12pt;line-height:1.7}
 #pa h1,#pa h2,#pa h3,#pa h4,#pa h5,#pa h6{font-family:'Fredoka','Sarabun',sans-serif;line-height:1.3;margin:1em 0 .3em;break-after:avoid}
 #pa h1{font-size:24pt}#pa h2{font-size:19pt}#pa h3{font-size:16pt}#pa h4{font-size:14pt}#pa h5{font-size:13pt}#pa h6{font-size:12pt}
@@ -250,6 +250,25 @@ body.fs .fsonly{display:inline-block}
 .fc button:hover{background:rgba(0,0,0,.12)}
 #edc.lk #ed{opacity:.7;background:repeating-linear-gradient(45deg,transparent 0 12px,rgba(0,0,0,.04) 12px 24px)}
 #pa .pk+.pk{break-before:page}
+
+#lib{position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:14px}
+#lib[hidden]{display:none}
+#lib .box{background:var(--card);border:3px solid var(--line);border-radius:12px;box-shadow:0 7px 0 rgba(0,0,0,.35);width:min(780px,100%);max-height:90vh;overflow:auto;padding:16px}
+.lib-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.lib-h h2{margin:0;font-size:1.2rem}
+.lsave{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;background:var(--bg);border:2px solid var(--line);border-radius:10px;padding:10px;margin-bottom:14px}
+.lsave .full{grid-column:1/-1}
+@media(max-width:600px){.lsave{grid-template-columns:1fr}}
+.lsel{font:inherit;color:var(--ink);background:var(--bg);border:2px solid var(--line);border-radius:8px;padding:6px 8px;width:100%}
+.fold{border:3px solid var(--line);border-radius:10px;margin:0 0 10px;background:var(--card);overflow:hidden}
+.fold>summary{cursor:pointer;font-weight:700;padding:8px 12px;display:flex;gap:8px;align-items:center;background:var(--soft)}
+.fold>summary .cnt{font-weight:400;color:var(--mute);font-size:.85rem;flex:1}
+.item{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:8px 12px;border-top:2px solid var(--soft)}
+.item .nm{flex:1 1 220px;min-width:0}
+.item .nm b{display:block;overflow-wrap:anywhere}
+.item small{color:var(--mute)}
+.item .lsel{width:auto;max-width:150px}
+.empty2{color:var(--mute);padding:8px 12px;margin:0}
 </style>
 </head>
 <body>
@@ -275,6 +294,8 @@ body.fs .fsonly{display:inline-block}
   <label class="btn" for="file">อัพโหลดไฟล์</label>
   <input type="file" id="file" multiple accept=".pdf,.html,.htm,.md,.txt,application/pdf,text/html,text/plain,text/markdown" hidden>
   <button type="button" class="btn" id="pvbtn" style="background:var(--blue)">Preview หน้าเว็บ</button>
+  <button type="button" class="btn" id="svbtn" style="background:var(--red)">💾 บันทึก SEO</button>
+  <button type="button" class="btn" id="libbtn" style="background:#1a1a1a">📁 คลัง SEO</button>
   <button type="button" class="btn" id="fsb" aria-pressed="false" style="background:#7b3fa0"><svg class="ico ic-out" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg><svg class="ico ic-in" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg><span id="fst">เต็มหน้าจอ</span></button>
   <div class="fl" id="fl" hidden></div>
   <span class="dl"><select id="dls" aria-label="ขอบเขตดาวน์โหลด" hidden></select><label for="dlf" class="sr">นามสกุลไฟล์</label><select id="dlf"><option value="txt">.txt</option><option value="pdf">.pdf</option></select><button type="button" class="btn" id="dlbtn" style="background:var(--green)">ดาวน์โหลด</button><label class="chk"><input type="checkbox" id="dlm" checked> แนบ SEO title / slug / meta</label></span>
@@ -348,6 +369,17 @@ body.fs .fsonly{display:inline-block}
  </div>
 </div>
 
+<div id="lib" hidden role="dialog" aria-modal="true" aria-label="คลัง SEO"><div class="box">
+ <div class="lib-h"><h2>📁 คลัง SEO ที่บันทึกไว้</h2><button type="button" class="mini" id="libx">ปิด</button></div>
+ <div class="lsave">
+  <div class="full"><label for="lsn">ชื่อที่บันทึก</label><input type="text" id="lsn"></div>
+  <div><label for="lsf">เก็บในโฟลเดอร์</label><select id="lsf" class="lsel"></select></div>
+  <div><label for="lsnf">หรือสร้างโฟลเดอร์ใหม่</label><input type="text" id="lsnf" placeholder="เช่น Iron Man"></div>
+  <div class="full"><button type="button" class="btn" id="lss" style="background:var(--green)">บันทึกบทความนี้</button> <span class="hint" id="lsh" role="status"></span></div>
+ </div>
+ <div id="lbody"></div>
+ <p class="hint">ข้อมูลเก็บในเบราว์เซอร์เครื่องนี้ (ล้างข้อมูลเบราว์เซอร์แล้วจะหาย)</p>
+</div></div>
 <div id="party" aria-hidden="true"></div><div id="toast" role="status" aria-live="polite" hidden></div><div id="pa" aria-hidden="true"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
@@ -973,6 +1005,77 @@ if(window.ResizeObserver) new ResizeObserver(measure).observe($('topbar'));
 window.addEventListener('resize',measure);measure();
 document.addEventListener('fullscreenchange',function(){if(!document.fullscreenElement&&document.body.classList.contains('fs'))setFs(false)});
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&document.body.classList.contains('fs')&&$('pv').hidden)setFs(false)},true);
+
+
+/* ===== คลัง SEO (บันทึก + โฟลเดอร์) ===== */
+var LK='armrSeoLib',lib={folders:['ทั่วไป'],items:[]};
+function lload(){try{var d=JSON.parse(localStorage.getItem(LK)||'null');if(d&&d.items){lib=d;if(!lib.folders||!lib.folders.length)lib.folders=['ทั่วไป']}}catch(e){}}
+function lstore(){try{localStorage.setItem(LK,JSON.stringify(lib));return true}catch(e){return false}}
+function tdate(t){try{return new Date(t).toLocaleString('th-TH',{dateStyle:'medium',timeStyle:'short'})}catch(e){return ''}}
+function allFolders(){var fs=lib.folders.slice();lib.items.forEach(function(i){if(fs.indexOf(i.folder)<0)fs.push(i.folder)});return fs}
+function libRender(keep){
+  var fs=allFolders(),opts=fs.map(function(f){return '<option>'+esc(f)+'</option>'}).join('');
+  $('lsf').innerHTML=opts;if(keep&&fs.indexOf(keep)>-1)$('lsf').value=keep;
+  $('lbody').innerHTML=fs.map(function(f){
+    var its=lib.items.filter(function(i){return i.folder===f}).sort(function(a,b){return b.t-a.t});
+    var rows=its.length?its.map(function(it){
+      return '<div class="item"><span class="dot '+esc(it.cls||'')+'"></span><div class="nm"><b>'+esc(it.name)+'</b><small>'+esc(it.lt||'')+' · '+tdate(it.t)+(it.fk?' · คีย์เวิร์ด: '+esc(it.fk):'')+'</small></div>'
+        +'<select class="lsel" data-a="mv" data-id="'+esc(it.id)+'" aria-label="ย้ายไปโฟลเดอร์"><option value="">ย้ายไป…</option>'+fs.filter(function(x){return x!==f}).map(function(x){return '<option>'+esc(x)+'</option>'}).join('')+'</select>'
+        +'<button type="button" class="mini" data-a="open" data-id="'+esc(it.id)+'">เปิด</button><button type="button" class="mini" data-a="del" data-id="'+esc(it.id)+'">ลบ</button></div>';
+    }).join(''):'<p class="empty2">ยังไม่มีรายการในโฟลเดอร์นี้</p>';
+    return '<details class="fold" open><summary>🧱 '+esc(f)+' <span class="cnt">('+its.length+')</span>'+(f!=='ทั่วไป'?'<button type="button" class="mini" data-a="delf" data-f="'+esc(f)+'">ลบโฟลเดอร์</button>':'')+'</summary>'+rows+'</details>';
+  }).join('');
+}
+function openLib(){
+  lload();$('lsn').value=norm($('stitle').value)||(files.length?fileName:'');$('lsnf').value='';$('lsh').textContent='';
+  libRender();$('lib').hidden=false;document.body.style.overflow='hidden';$('lsn').focus();
+}
+function closeLib(){$('lib').hidden=true;document.body.style.overflow=''}
+function doSave(){
+  var h=$('lsh');
+  if(!norm($('ed').innerText||'')){h.textContent='ยังไม่มีเนื้อหาให้บันทึก';return}
+  lload();
+  var nf=norm($('lsnf').value),folder=nf||$('lsf').value||'ทั่วไป';
+  if(lib.folders.indexOf(folder)<0)lib.folders.push(folder);
+  var name=norm($('lsn').value)||norm($('stitle').value)||fileName||'บทความ';
+  var rec={id:'s'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),name:name,folder:folder,t:Date.now(),lt:$('lt').textContent,cls:$('dot').className.replace('dot','').trim(),html:$('ed').innerHTML,dom:$('dom').value};
+  FLD.forEach(function(k){rec[k]=$(k).value});
+  var old=lib.items.filter(function(i){return i.name===name&&i.folder===folder})[0],upd=false;
+  if(old){rec.id=old.id;lib.items[lib.items.indexOf(old)]=rec;upd=true}else lib.items.push(rec);
+  if(!lstore()){lload();h.textContent='บันทึกไม่สำเร็จ: พื้นที่เก็บของเบราว์เซอร์เต็ม (ลองลบรายการเก่า)';return}
+  libRender(folder);$('lsnf').value='';
+  h.textContent=(upd?'อัปเดตแล้ว':'บันทึกแล้ว')+' ✓ ในโฟลเดอร์ "'+folder+'"';
+}
+function libOpen(id){
+  var it=lib.items.filter(function(i){return i.id===id})[0];if(!it)return;
+  snap();var f={name:it.name,on:true,html:it.html,cls:it.cls?'dot '+it.cls:'dot'};
+  FLD.forEach(function(k){f[k]=it[k]||''});files.push(f);show(files.length-1);
+  $('dom').value=it.dom||'';analyze();closeLib();
+}
+var delArm=null;
+$('lbody').addEventListener('click',function(e){
+  var b=e.target.closest('[data-a]');if(!b)return;var a=b.getAttribute('data-a'),id=b.getAttribute('data-id');
+  if(a==='open'){libOpen(id)}
+  else if(a==='del'||a==='delf'){
+    var key=a+(id||b.getAttribute('data-f'));e.preventDefault();
+    if(delArm!==key){delArm=key;b.textContent='กดอีกครั้งเพื่อยืนยัน';setTimeout(function(){if(delArm===key){delArm=null;libRender($('lsf').value)}},3000);return}
+    delArm=null;
+    if(a==='del')lib.items=lib.items.filter(function(i){return i.id!==id});
+    else{var f=b.getAttribute('data-f');lib.items=lib.items.filter(function(i){return i.folder!==f});lib.folders=lib.folders.filter(function(x){return x!==f})}
+    lstore();libRender($('lsf').value);
+  }
+});
+$('lbody').addEventListener('change',function(e){
+  var s=e.target;if(s.getAttribute('data-a')!=='mv'||!s.value)return;
+  var it=lib.items.filter(function(i){return i.id===s.getAttribute('data-id')})[0];
+  if(it){it.folder=s.value;lstore();libRender($('lsf').value)}
+});
+$('svbtn').addEventListener('click',openLib);
+$('libbtn').addEventListener('click',function(){openLib();$('lbody').scrollIntoView({block:'start'})});
+$('lss').addEventListener('click',doSave);
+$('libx').addEventListener('click',closeLib);
+$('lib').addEventListener('click',function(e){if(e.target===this)closeLib()});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!$('lib').hidden)closeLib()});
 
 var ldN=1,ldMin=Date.now()+Math.max(0,2300-(window.performance?performance.now():0));
 function ldShow(t,m,min){
